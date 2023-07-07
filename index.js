@@ -35,6 +35,19 @@ app.get('/', (req, res) => {
   `);
 });
 
+app.get('/api/torrents/:query/:page?', async (req, res) => {
+  const { query, page = 1 } = req.params;
+
+  try {
+    const response = await fetch(`https://torrents-api.ryukme.repl.co/api/all/${query}/${page}`);
+    const data = await response.json();
+    res.json(data);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: 'An error occurred while fetching torrents data.' });
+  }
+});
+
 // Route for getting technology news in the US
 app.get('/api/news/us-tech', (req, res) => {
   fetch('https://saurav.tech/NewsAPI/top-headlines/category/technology/us.json')

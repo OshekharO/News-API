@@ -39,7 +39,7 @@ app.get('/api/torrents/:query/:page?', async (req, res) => {
   const { query, page = 1 } = req.params;
 
   try {
-    const response = await fetch(`https://torrents-api.ryukme.repl.co/api/all/${query}/${page}`);
+    const response = await fetch(`https://torrents-api.ryukme.repl.co/api/nyaasi/${query}/${page}`);
     const data = await response.json();
     res.json(data);
   } catch (err) {

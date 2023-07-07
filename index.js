@@ -28,6 +28,8 @@ app.get('/', (req, res) => {
           <li class="list-group-item"><a href="/api/news/inshorts">/api/news/inshorts</a> - Fetches news from Inshorts. Use ?query= to search for news.</li>
           <li class="list-group-item"><a href="/api/news/us-tech">/api/news/us-tech</a> - Fetches top headlines in the technology category from the US</li>
           <li class="list-group-item"><a href="/api/news/in-tech">/api/news/in-tech</a> - Fetches top headlines in the technology category from India</li>
+          <li class="list-group-item"><a href="/api/torrents/avengers/1">/api/torrents/:query/:page?</a> - Fetches torrents data from PirateBay. Replace :query with your search query. :page is optional and defaults to 1.</li>
+          <li class="list-group-item"><a href="/api/neplix/avengers/1">/api/neplix/:query/:page?</a> - Fetches torrent data from 1337x. Replace :query with your search query. :page is optional and defaults to 1.</li>
         </ul>
       </div>
     </body>
@@ -35,11 +37,24 @@ app.get('/', (req, res) => {
   `);
 });
 
+app.get('/api/neplix/:query/:page?', async (req, res) => {
+  const { query, page = 1 } = req.params;
+
+  try {
+    const response = await fetch(`https://api.neplix.stream/api/1337x/${query}/${page}`);
+    const data = await response.json();
+    res.json(data);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: 'An error occurred while fetching data from Neplix.' });
+  }
+});
+
 app.get('/api/torrents/:query/:page?', async (req, res) => {
   const { query, page = 1 } = req.params;
 
   try {
-    const response = await fetch(`https://torrents-api.ryukme.repl.co/api/nyaasi/${query}/${page}`);
+    const response = await fetch(`https://torrents-api.ryukme.repl.co/api/piratebay/${query}/${page}`);
     const data = await response.json();
     res.json(data);
   } catch (err) {

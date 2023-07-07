@@ -9,7 +9,7 @@
   },
   "keywords": ["API", "News", "Torrents"],
   "author": "Saksham Shekher",
-  "license": "MIT",
+  "license": "GPL",
   "dependencies": {
     "express": "^4.17.1",
     "cors": "^2.8.5",

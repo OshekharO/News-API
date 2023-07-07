@@ -3,6 +3,9 @@ const fetch = require('node-fetch');
 const cors = require('cors');
 // Import your scraper function
 const { pirateBay } = require('./scraper/pirateBay');
+const { scraper1337x } = require('./scraper/1337x');
+const { scraperNyaaSI } = require('./scraper/nyaaSI');
+const { scraperYts } = require('./scraper/yts');
 
 const app = express();
 const port = 3000;
@@ -39,44 +42,37 @@ app.get('/', (req, res) => {
   `);
 });
 
-app.get('/api/scraper/:query/:page?', async (req, res) => {
+app.get('/api/scraper/piratebay/:query/:page?', async (req, res) => {
   const { query, page = 1 } = req.params;
+  handleScrapingRequest(pirateBay, query, page, res);
+});
 
+app.get('/api/scraper/1337x/:query/:page?', async (req, res) => {
+  const { query, page = 1 } = req.params;
+  handleScrapingRequest(scraper1337x, query, page, res);
+});
+
+app.get('/api/scraper/nyaasi/:query/:page?', async (req, res) => {
+  const { query, page = 1 } = req.params;
+  handleScrapingRequest(scraperNyaaSI, query, page, res);
+});
+
+app.get('/api/scraper/yts/:query/:page?', async (req, res) => {
+  const { query, page = 1 } = req.params;
+  handleScrapingRequest(scraperYts, query, page, res);
+});
+
+// Generic function to handle scraping requests
+async function handleScrapingRequest(scraperFunction, query, page, res) {
   try {
     // Use the scraper function instead of fetching the API
-    const data = await pirateBay(query, page);
+    const data = await scraperFunction(query, page);
     res.json(data);
   } catch (err) {
     console.error(err);
     res.status(500).json({ message: 'An error occurred while scraping torrents data.' });
   }
-});
-
-app.get('/api/neplix/:query/:page?', async (req, res) => {
-  const { query, page = 1 } = req.params;
-
-  try {
-    const response = await fetch(`https://api.neplix.stream/api/1337x/${query}/${page}`);
-    const data = await response.json();
-    res.json(data);
-  } catch (err) {
-    console.error(err);
-    res.status(500).json({ message: 'An error occurred while fetching data from Neplix.' });
-  }
-});
-
-app.get('/api/torrents/:query/:page?', async (req, res) => {
-  const { query, page = 1 } = req.params;
-
-  try {
-    const response = await fetch(`https://torrents-api.ryukme.repl.co/api/piratebay/${query}/${page}`);
-    const data = await response.json();
-    res.json(data);
-  } catch (err) {
-    console.error(err);
-    res.status(500).json({ message: 'An error occurred while fetching torrents data.' });
-  }
-});
+}
 
 // Route for getting technology news in the US
 app.get('/api/news/us-tech', (req, res) => {

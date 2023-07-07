@@ -10,14 +10,25 @@ app.use(cors());
 
 app.get('/', (req, res) => {
   res.send(`
-    <h1>Welcome to the News API!</h1>
-    <h2>Available Endpoints:</h2>
-    <ul>
-      <li><a href="/api/news/ann">/api/news/ann</a> - Fetches news from AnimeNewsNetwork</li>
-      <li><a href="/api/news/inshorts">/api/news/inshorts</a> - Fetches news from Inshorts. Use ?query= to search for news.</li>
-      <li><a href="/api/news/us-tech">/api/news/us-tech</a> - Fetches top headlines in the technology category from the US</li>
-      <li><a href="/api/news/in-tech">/api/news/in-tech</a> - Fetches top headlines in the technology category from India</li>
-    </ul>
+    <!DOCTYPE html>
+    <html>
+    <head>
+      <title>News API</title>
+      <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+    </head>
+    <body>
+      <div class="container mt-5">
+        <h1>Welcome to the News API!</h1>
+        <h2 class="mt-4">Available Endpoints:</h2>
+        <ul class="list-group mt-3">
+          <li class="list-group-item"><a href="/api/news/ann">/api/news/ann</a> - Fetches news from AnimeNewsNetwork</li>
+          <li class="list-group-item"><a href="/api/news/inshorts">/api/news/inshorts</a> - Fetches news from Inshorts. Use ?query= to search for news.</li>
+          <li class="list-group-item"><a href="/api/news/us-tech">/api/news/us-tech</a> - Fetches top headlines in the technology category from the US</li>
+          <li class="list-group-item"><a href="/api/news/in-tech">/api/news/in-tech</a> - Fetches top headlines in the technology category from India</li>
+        </ul>
+      </div>
+    </body>
+    </html>
   `);
 });
 

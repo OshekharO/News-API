@@ -20,11 +20,8 @@ There are two endpoints available:
 4. `/api/news/us-tech` - Fetches top headlines in the technology category from the US.
    * Example: `https://news-api-six-navy.vercel.app/api/news/us-tech`
   
-5. `/api/torrents/:query/:page?` - Fetches torrents data from PirateBay. Replace :query with your search query. :page is optional and defaults to 1.
+5. `/api/torrent/:website/:query/:page?` - Fetches torrents data from PirateBay. Replace piratebay with yts, nyaasi or 1337x. Replace :query with your search query. :page is optional and defaults to 1.
    * Example: `https://news-api-six-navy.vercel.app/api/torrents/avengers/1`
-
-6. `/api/neplix/:query/:page?` - Fetches torrent data from 1337x. Replace :query with your search query. :page is optional and defaults to 1.
-   * Example: `https://news-api-six-navy.vercel.app/api/neplix/avengers/1`
 
 ## Response
 

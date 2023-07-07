@@ -1,0 +1,33 @@
+const express = require('express');
+const fetch = require('node-fetch');
+
+const app = express();
+const port = 3000;
+
+app.get('/api/news/:source', async (req, res) => {
+  const { source } = req.params;
+
+  let url;
+  if (source === 'ann') {
+    url = 'https://api.consumet.org/news/ann/recent-feeds';
+  } else if (source === 'inshorts') {
+    url = 'https://inshorts.me/news/all?offset=0&limit=20';
+  } else {
+    return res.status(400).send('Invalid source');
+  }
+
+  try {
+    const response = await fetch(url);
+    const data = await response.json();
+    res.json(data);
+  } catch (error) {
+    console.error('Error:', error);
+    res.status(500).send('Server error');
+  }
+});
+
+app.listen(port, () => {
+  console.log(`Server running at http://localhost:${port}/`);
+});
+
+module.exports = app; // Export your app

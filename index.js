@@ -8,6 +8,18 @@ const port = 3000;
 // Enable All CORS Requests
 app.use(cors());
 
+app.get('/', (req, res) => {
+  res.json({
+    message: 'Welcome to the News API!',
+    endpoints: {
+      '/api/news/ann': 'Fetches news from AnimeNewsNetwork',
+      '/api/news/inshorts': 'Fetches news from Inshorts. Use ?query= to search for news.',
+      '/api/news/us-tech': 'Fetches top headlines in the technology category from the US',
+      '/api/news/in-tech': 'Fetches top headlines in the technology category from India'
+    }
+  });
+});
+
 // Route for getting technology news in the US
 app.get('/api/news/us-tech', (req, res) => {
   fetch('https://saurav.tech/NewsAPI/top-headlines/category/technology/us.json')

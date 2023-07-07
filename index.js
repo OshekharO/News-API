@@ -1,6 +1,8 @@
 const express = require('express');
 const fetch = require('node-fetch');
 const cors = require('cors');
+// Import your scraper function
+const { pirateBay } = require('./scraper/pirateBay');
 
 const app = express();
 const port = 3000;
@@ -35,6 +37,19 @@ app.get('/', (req, res) => {
     </body>
     </html>
   `);
+});
+
+app.get('/api/scraper/:query/:page?', async (req, res) => {
+  const { query, page = 1 } = req.params;
+
+  try {
+    // Use the scraper function instead of fetching the API
+    const data = await pirateBay(query, page);
+    res.json(data);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: 'An error occurred while scraping torrents data.' });
+  }
 });
 
 app.get('/api/neplix/:query/:page?', async (req, res) => {

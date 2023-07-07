@@ -1,8 +1,12 @@
 const express = require('express');
 const fetch = require('node-fetch');
+const cors = require('cors');
 
 const app = express();
 const port = 3000;
+
+// Enable All CORS Requests
+app.use(cors());
 
 app.get('/api/news/:source', async (req, res) => {
   const { source } = req.params;

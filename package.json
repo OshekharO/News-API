@@ -1,14 +1,21 @@
 {
   "name": "news-api",
   "version": "1.0.0",
-  "description": "A simple news API",
+  "description": "A simple API that fetches news from different sources.",
   "main": "index.js",
   "scripts": {
-    "start": "node index.js"
+    "start": "node index.js",
+    "dev": "nodemon index.js"
   },
+  "keywords": ["API", "News", "Torrents"],
+  "author": "Saksham Shekher",
+  "license": "MIT",
   "dependencies": {
     "express": "^4.17.1",
-    "node-fetch": "^2.6.6",
-    "cors": "^2.8.5"
+    "cors": "^2.8.5",
+    "node-fetch": "^2.6.6"
+  },
+  "devDependencies": {
+    "nodemon": "^2.0.15"
   }
 }

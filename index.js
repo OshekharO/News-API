@@ -8,6 +8,22 @@ const port = 3000;
 // Enable All CORS Requests
 app.use(cors());
 
+// Route for getting technology news in the US
+app.get('/api/news/us-tech', (req, res) => {
+  fetch('https://saurav.tech/NewsAPI/top-headlines/category/technology/us.json')
+    .then(response => response.json())
+    .then(data => res.json(data))
+    .catch(err => res.status(500).json({ error: err.toString() }));
+});
+
+// Route for getting technology news in India
+app.get('/api/news/in-tech', (req, res) => {
+  fetch('https://saurav.tech/NewsAPI/top-headlines/category/technology/in.json')
+    .then(response => response.json())
+    .then(data => res.json(data))
+    .catch(err => res.status(500).json({ error: err.toString() }));
+});
+
 app.get('/api/news/:source', async (req, res) => {
   const { source } = req.params;
   const { query } = req.query; // Access query parameter from the request

@@ -53,7 +53,7 @@ app.get('/api/torrent/1337x/:query/:page?', async (req, res) => {
 
 app.get('/api/torrent/nyaasi/:query/:page?', async (req, res) => {
   const { query, page = 1 } = req.params;
-  handleScrapingRequest(scrapNyaaSI, query, page, res);
+  handleScrapingRequest(scrapNyaa, query, page, res);
 });
 
 app.get('/api/torrent/yts/:query/:page?', async (req, res) => {

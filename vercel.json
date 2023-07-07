@@ -1,6 +1,16 @@
 {
   "version": 2,
   "name": "news-api",
-  "builds": [{ "src": "index.js", "use": "@vercel/node" }],
-  "routes": [{ "src": "/api/news/(.*)", "dest": "index.js" }]
+  "builds": [
+    {
+      "src": "index.js",
+      "use": "@vercel/node"
+    }
+  ],
+  "routes": [
+    {
+      "src": "/(.*)",
+      "dest": "index.js"
+    }
+  ]
 }

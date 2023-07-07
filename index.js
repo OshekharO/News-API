@@ -10,12 +10,17 @@ app.use(cors());
 
 app.get('/api/news/:source', async (req, res) => {
   const { source } = req.params;
+  const { query } = req.query; // Access query parameter from the request
 
   let url;
   if (source === 'ann') {
     url = 'https://api.consumet.org/news/ann/recent-feeds';
   } else if (source === 'inshorts') {
-    url = 'https://inshorts.me/news/all?offset=0&limit=20';
+    if(query) {
+      url = `https://inshorts.me/news/search?query=${query}&offset=0&limit=20`;
+    } else {
+      url = 'https://inshorts.me/news/all?offset=0&limit=20';
+    }
   } else {
     return res.status(400).send('Invalid source');
   }

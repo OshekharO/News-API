@@ -33,8 +33,7 @@ app.get('/', (req, res) => {
           <li class="list-group-item"><a href="/api/news/inshorts">/api/news/inshorts</a> - Fetches news from Inshorts. Use ?query= to search for news.</li>
           <li class="list-group-item"><a href="/api/news/us-tech">/api/news/us-tech</a> - Fetches top headlines in the technology category from the US</li>
           <li class="list-group-item"><a href="/api/news/in-tech">/api/news/in-tech</a> - Fetches top headlines in the technology category from India</li>
-          <li class="list-group-item"><a href="/api/torrents/avengers/1">/api/torrents/:query/:page?</a> - Fetches torrents data from PirateBay. Replace :query with your search query. :page is optional and defaults to 1.</li>
-          <li class="list-group-item"><a href="/api/neplix/avengers/1">/api/neplix/:query/:page?</a> - Fetches torrent data from 1337x. Replace :query with your search query. :page is optional and defaults to 1.</li>
+          <li class="list-group-item"><a href="/api/torrent/piratebay/avengers/1">/api/torrent/piratebay/:query/:page?</a> - Fetches torrents data from PirateBay. Replace piratebay with yts, nyaasi or 1337x. Replace :query with your search query. :page is optional and defaults to 1.</li>
         </ul>
       </div>
     </body>
@@ -42,22 +41,22 @@ app.get('/', (req, res) => {
   `);
 });
 
-app.get('/api/scraper/piratebay/:query/:page?', async (req, res) => {
+app.get('/api/torrent/piratebay/:query/:page?', async (req, res) => {
   const { query, page = 1 } = req.params;
   handleScrapingRequest(pirateBay, query, page, res);
 });
 
-app.get('/api/scraper/1337x/:query/:page?', async (req, res) => {
+app.get('/api/torrent/1337x/:query/:page?', async (req, res) => {
   const { query, page = 1 } = req.params;
   handleScrapingRequest(scraper1337x, query, page, res);
 });
 
-app.get('/api/scraper/nyaasi/:query/:page?', async (req, res) => {
+app.get('/api/torrent/nyaasi/:query/:page?', async (req, res) => {
   const { query, page = 1 } = req.params;
   handleScrapingRequest(scraperNyaaSI, query, page, res);
 });
 
-app.get('/api/scraper/yts/:query/:page?', async (req, res) => {
+app.get('/api/torrent/yts/:query/:page?', async (req, res) => {
   const { query, page = 1 } = req.params;
   handleScrapingRequest(scraperYts, query, page, res);
 });

@@ -9,15 +9,16 @@ const port = 3000;
 app.use(cors());
 
 app.get('/', (req, res) => {
-  res.json({
-    message: 'Welcome to the News API!',
-    endpoints: {
-      '/api/news/ann': 'Fetches news from AnimeNewsNetwork',
-      '/api/news/inshorts': 'Fetches news from Inshorts. Use ?query= to search for news.',
-      '/api/news/us-tech': 'Fetches top headlines in the technology category from the US',
-      '/api/news/in-tech': 'Fetches top headlines in the technology category from India'
-    }
-  });
+  res.send(`
+    <h1>Welcome to the News API!</h1>
+    <h2>Available Endpoints:</h2>
+    <ul>
+      <li><a href="/api/news/ann">/api/news/ann</a> - Fetches news from AnimeNewsNetwork</li>
+      <li><a href="/api/news/inshorts">/api/news/inshorts</a> - Fetches news from Inshorts. Use ?query= to search for news.</li>
+      <li><a href="/api/news/us-tech">/api/news/us-tech</a> - Fetches top headlines in the technology category from the US</li>
+      <li><a href="/api/news/in-tech">/api/news/in-tech</a> - Fetches top headlines in the technology category from India</li>
+    </ul>
+  `);
 });
 
 // Route for getting technology news in the US

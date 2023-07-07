@@ -21,16 +21,14 @@ app.get('/', (req, res) => {
     </head>
     <body>
       <div class="container mt-5">
-        <h1 class="badge badge-primary text-wrap mx-auto">Welcome to the News API!</h1>
+        <h1 class="badge badge-primary text-wrap mx-auto text-center">Welcome to the News API!</h1>
         <h2 class="mt-4 text-center">Available Endpoints:</h2>
-       <div class="box-title">
-        <ul class="list-group panel-title alert alert-primary font-monospace">
+        <ul class="list-group mt-3 font-monospace">
           <li class="list-group-item"><a href="/api/news/ann">/api/news/ann</a> - Fetches news from AnimeNewsNetwork</li>
           <li class="list-group-item"><a href="/api/news/inshorts">/api/news/inshorts</a> - Fetches news from Inshorts. Use ?query= to search for news.</li>
           <li class="list-group-item"><a href="/api/news/us-tech">/api/news/us-tech</a> - Fetches top headlines in the technology category from the US</li>
           <li class="list-group-item"><a href="/api/news/in-tech">/api/news/in-tech</a> - Fetches top headlines in the technology category from India</li>
         </ul>
-      </div>
       </div>
     </body>
     </html>

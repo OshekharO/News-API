@@ -43,7 +43,7 @@ app.get('/', (req, res) => {
 
 app.get('/api/torrent/piratebay/:query/:page?', async (req, res) => {
   const { query, page = 1 } = req.params;
-  handleScrapingRequest(scrappirateBay, query, page, res);
+  handleScrapingRequest(scrapPirateBay, query, page, res);
 });
 
 app.get('/api/torrent/1337x/:query/:page?', async (req, res) => {

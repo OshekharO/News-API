@@ -1,6 +1,6 @@
 # News API
 
-This is a simple server that serves as a unified API endpoint for fetching news from different sources. Currently, it supports AnimeNewsNetwork and Inshorts.
+This is a simple server that serves as a unified API endpoint for fetching news from different sources. Currently, it supports AnimeNewsNetwork, Inshorts and some other sources.
 
 The server is built using Node.js and Express and is hosted on Vercel.
 
@@ -13,6 +13,12 @@ There are two endpoints available:
    
 2. `/api/news/inshorts` - Fetches news from Inshorts. You can also provide a query parameter to search for news.
    * Example: `https://news-api-six-navy.vercel.app/api/news/inshorts?query=covid`
+  
+3. `/api/news/in-tech` - Fetches top headlines in the technology category from the india.
+   * Example: `https://news-api-six-navy.vercel.app/api/news/in-tech`
+
+5. `/api/news/us-tech` - Fetches top headlines in the technology category from the US.
+   * Example: `https://news-api-six-navy.vercel.app/api/news/us-tech`
 
 ## Response
 

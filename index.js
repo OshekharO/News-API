@@ -73,6 +73,14 @@ async function handleScrapingRequest(scraperFunction, query, page, res) {
   }
 }
 
+// Route for getting technology news from hacker news
+app.get('/api/news/hacker-news', (req, res) => {
+  fetch('https://api.hackerwebapp.com/news')
+    .then(response => response.json())
+    .then(data => res.json(data))
+    .catch(err => res.status(500).json({ error: err.toString() }));
+});
+
 // Route for getting technology news in the US
 app.get('/api/news/us-tech', (req, res) => {
   fetch('https://saurav.tech/NewsAPI/top-headlines/category/technology/us.json')

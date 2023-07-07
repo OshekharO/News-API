@@ -21,7 +21,7 @@ app.get('/', (req, res) => {
     </head>
     <body>
       <div class="container mt-5">
-        <h1 class="badge badge-primary text-wrap text-center">Welcome to the News API!</h1>
+        <h1 class="badge badge-primary text-wrap mx-auto">Welcome to the News API!</h1>
         <h2 class="mt-4 text-center">Available Endpoints:</h2>
        <div class="box-title">
         <ul class="list-group panel-title alert alert-primary font-monospace">

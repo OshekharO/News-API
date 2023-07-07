@@ -16,11 +16,13 @@ app.get('/', (req, res) => {
       <title>News API</title>
       <meta name="viewport" content="width=device-width, initial-scale=1.0">
       <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+      <style>
+      </style>
     </head>
     <body>
       <div class="container mt-5">
-        <h1>Welcome to the News API!</h1>
-        <h2 class="mt-4">Available Endpoints:</h2>
+        <h1 class="badge badge-primary text-wrap text-center">Welcome to the News API!</h1>
+        <h2 class="mt-4 text-center">Available Endpoints:</h2>
         <ul class="list-group mt-3">
           <li class="list-group-item"><a href="/api/news/ann">/api/news/ann</a> - Fetches news from AnimeNewsNetwork</li>
           <li class="list-group-item"><a href="/api/news/inshorts">/api/news/inshorts</a> - Fetches news from Inshorts. Use ?query= to search for news.</li>

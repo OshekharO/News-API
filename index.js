@@ -2,10 +2,10 @@ const express = require('express');
 const fetch = require('node-fetch');
 const cors = require('cors');
 // Import your scraper function
-const { pirateBay } = require('./scraper/pirateBay');
-const { 1337x } = require('./scraper/1337x');
-const { NyaaSI } = require('./scraper/nyaaSI');
-const { Yts } = require('./scraper/yts');
+const scrapPirateBay = require('./scraper/pirateBay');
+const scrap1337x = require('./scraper/1337x');
+const scrapNyaa = require('./scraper/nyaaSI');
+const scrapYts = require('./scraper/yts');
 
 const app = express();
 const port = 3000;
@@ -43,22 +43,22 @@ app.get('/', (req, res) => {
 
 app.get('/api/torrent/piratebay/:query/:page?', async (req, res) => {
   const { query, page = 1 } = req.params;
-  handleScrapingRequest(pirateBay, query, page, res);
+  handleScrapingRequest(scrappirateBay, query, page, res);
 });
 
 app.get('/api/torrent/1337x/:query/:page?', async (req, res) => {
   const { query, page = 1 } = req.params;
-  handleScrapingRequest(1337x, query, page, res);
+  handleScrapingRequest(scrap1337x, query, page, res);
 });
 
 app.get('/api/torrent/nyaasi/:query/:page?', async (req, res) => {
   const { query, page = 1 } = req.params;
-  handleScrapingRequest(NyaaSI, query, page, res);
+  handleScrapingRequest(scrapNyaaSI, query, page, res);
 });
 
 app.get('/api/torrent/yts/:query/:page?', async (req, res) => {
   const { query, page = 1 } = req.params;
-  handleScrapingRequest(Yts, query, page, res);
+  handleScrapingRequest(scrapYts, query, page, res);
 });
 
 // Generic function to handle scraping requests

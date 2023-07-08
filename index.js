@@ -189,7 +189,7 @@ app.get('/api/spankbang/trending/:page?', async (req, res) => {
     res.json(videos);
   } catch (err) {
     console.error(err);
-    res.status(500).json({ message: 'An error occurred while fetching Spankbang trending videos.' });
+    res.status(500).json({ message: 'An error occurred while fetching Spankbang trending videos.', error: err.message });
   }
 });
 

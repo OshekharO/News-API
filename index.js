@@ -6,6 +6,7 @@ const { pirateBay } = require('./scraper/pirateBay');
 const { torrent1337x } = require('./scraper/1337x');
 const { nyaaSI } = require('./scraper/nyaaSI');
 const { yts } = require('./scraper/yts');
+const { getThumbnail, getLyrics } = require('./scraper/genius'); // replace with your actual scraper file path
 
 const app = express();
 const port = 3000;
@@ -72,6 +73,28 @@ async function handleScrapingRequest(scraperFunction, query, page, res) {
     res.status(500).json({ message: 'An error occurred while scraping torrents data.' });
   }
 }
+
+app.get('/api/lyrics/:query', async (req, res) => {
+  const { query } = req.params;
+  try {
+    const lyrics = await getLyrics(query);
+    res.json({ lyrics });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: 'An error occurred while fetching lyrics.' });
+  }
+});
+
+app.get('/api/thumbnail/:query', async (req, res) => {
+  const { query } = req.params;
+  try {
+    const thumbnail = await getThumbnail(query);
+    res.json({ thumbnail });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: 'An error occurred while fetching the thumbnail.' });
+  }
+});
 
 // Route for getting technology news from hacker news
 app.get('/api/news/hacker-news', (req, res) => {

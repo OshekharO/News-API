@@ -76,20 +76,16 @@ async function handleScrapingRequest(scraperFunction, query, page, res) {
 app.get('/api/genius/:query', async (req, res) => {
   const { query } = req.params;
   try {
-    const response = await axios.get(`https://genius.com/api/search/multi?per_page=1&q=${query}`);
-    res.json(response.data);
+    const response = await fetch(`https://genius.com/api/search/multi?per_page=1&q=${query}`);
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+    const data = await response.json();
+    res.json(data);
   } catch (err) {
     console.error(err);
     res.status(500).json({ message: 'An error occurred while fetching data from Genius.' });
   }
-});
-
-// Route for getting technology news from hacker news
-app.get('/api/news/hacker-news', (req, res) => {
-  fetch('https://api.hackerwebapp.com/news')
-    .then(response => response.json())
-    .then(data => res.json(data))
-    .catch(err => res.status(500).json({ error: err.toString() }));
 });
 
 // Route for getting technology news in the US

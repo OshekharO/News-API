@@ -24,24 +24,29 @@ exports.spankbangVideo = function (videoId) {
 
 exports.spankbangTrending = function (page = 1) {
     return new Promise((resolve, reject) => {
-        axios.get(`https://spankbang.com/trending_videos/${page}`)
+        axios.get(`https://spankbang.com/trending_videos/${page}`, {
+          headers: {
+            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/74.0.3729.169 Safari/537.36'
+          }
+        })
         .then((res) => {
             const $ = cheerio.load(res.data)
-            const videos = [];
+            const results = [];
 
             $('.video-item').each((index, element) => {
-                const video = {};
-                video.id = $(element).attr('data-id');
-                video.url = 'https://spankbang.com' + $(element).find('a.thumb').attr('href');
-                video.title = $(element).find('a.thumb').attr('title');
-                video.thumbnail = $(element).find('img.cover').attr('data-src');
-                video.length = $(element).find('.l').text();
-                video.views = $(element).find('.v').text();
-                video.uploadTime = $(element).find('.d').text();
-                videos.push(video);
+                const result = {};
+                result.id = $(element).attr('data-id');
+                result.title = $(element).find('.thumb').attr('title');
+                result.thumbnail = $(element).find('.cover').attr('data-src');
+                result.link = `https://spankbang.com${$(element).find('.thumb').attr('href')}`;
+                result.duration = $(element).find('.l').text();
+                result.views = $(element).find('.v').text();
+                result.rating = $(element).find('.r').text();
+                result.uploaded = $(element).find('.d').text();
+                results.push(result);
             });
 
-            resolve(videos);
+            resolve(results);
         }).catch(reject);
     });
 };

@@ -7,7 +7,7 @@ const { torrent1337x } = require('./scraper/1337x');
 const { nyaaSI } = require('./scraper/nyaaSI');
 const { yts } = require('./scraper/yts');
 // API keys and index
-const API_KEYS = ['rmt7lFVU2HTrio72Ej6F9t4AE6fnpuYSlOrXhjX50Q8', 'P3BRAgk3JTlgCj4BbHpsIrOBleKSEttzA2HOwDglfrk', 'a88be3b532msh436d515e78b0c7ap104f31jsnfccd6e30053c'];
+const API_KEYS = ['rmt7lFVU2HTrio72Ej6F9t4AE6fnpuYSlOrXhjX50Q8', 'P3BRAgk3JTlgCj4BbHpsIrOBleKSEttzA2HOwDglfrk', 'UhEM6sCXRqA_ge-gfOiEXzAOAODhv9kB9WbFqk1clDg'];
 let currentKeyIndex = 0;
 
 const app = express();
@@ -91,12 +91,20 @@ app.get('/api/genius/:query', async (req, res) => {
   }
 });
 
+let requestCount = 0;
+
 app.get('/api/newscatcher/:query', async (req, res) => {
   const { query } = req.params;
 
-  // Update the key index, and reset to 0 if it's out of bounds
-  currentKeyIndex = (currentKeyIndex + 1) % API_KEYS.length;
-  
+  // Update the request count
+  requestCount++;
+
+  // If we've made 50 requests with the current key, move on to the next one
+  if (requestCount >= 50) {
+    currentKeyIndex = (currentKeyIndex + 1) % API_KEYS.length;
+    requestCount = 0;  // Reset the request count
+  }
+
   try {
     const currentKey = API_KEYS[currentKeyIndex];
     console.log(`Using key: ${currentKey}`);  // Log the current key

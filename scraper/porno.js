@@ -20,7 +20,20 @@ exports.porno = function () {
                 results.push(result);
             });
 
-            resolve(results);
+            axios.get('https://tik.porn/')
+            .then((res) => {
+                const $ = cheerio.load(res.data);
+                const tikporn = {};
+
+                tikporn.title = $('.Player_player__nKEIR img').attr('alt');
+                tikporn.thumbnail = $('.Player_player__nKEIR img').attr('src');
+                tikporn.video = $('.Player_player__nKEIR video').attr('src');
+                tikporn.likes = $('.PlayerSidebar_likeIcon__Qla40 span').text();
+                tikporn.downloadLink = $('.PlayerSidebar_downloadIcon__OzDw6 a').attr('href');
+
+                resolve({ tikporntok: results, tikporn });
+            }).catch(reject);
         }).catch(reject);
     });
 };
+                    

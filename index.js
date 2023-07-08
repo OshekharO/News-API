@@ -91,8 +91,11 @@ app.get('/api/genius/:query', async (req, res) => {
   }
 });
 
-app.get('/api/news/newscatcher/:query', async (req, res) => {
+app.get('/api/newscatcher/:query', async (req, res) => {
   const { query } = req.params;
+
+  // Update the key index, and reset to 0 if it's out of bounds
+  currentKeyIndex = (currentKeyIndex + 1) % API_KEYS.length;
   
   try {
     const response = await fetch(`https://api.newscatcherapi.com/v2/search?q=${query}`, {
@@ -107,12 +110,9 @@ app.get('/api/news/newscatcher/:query', async (req, res) => {
     
     const data = await response.json();
     res.json(data);
-
-    // Rotate the API key
-    currentKeyIndex = (currentKeyIndex + 1) % API_KEYS.length;
   } catch (err) {
     console.error(err);
-    res.status(500).json({ message: 'An error occurred while fetching news data.' });
+    res.status(500).json({ message: 'An error occurred while fetching data from Newscatcher.' });
   }
 });
 

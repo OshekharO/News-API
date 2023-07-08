@@ -6,9 +6,13 @@ const { pirateBay } = require('./scraper/pirateBay');
 const { torrent1337x } = require('./scraper/1337x');
 const { nyaaSI } = require('./scraper/nyaaSI');
 const { yts } = require('./scraper/yts');
-// API keys and index
-const API_KEYS = ['rmt7lFVU2HTrio72Ej6F9t4AE6fnpuYSlOrXhjX50Q8', 'P3BRAgk3JTlgCj4BbHpsIrOBleKSEttzA2HOwDglfrk', 'UhEM6sCXRqA_ge-gfOiEXzAOAODhv9kB9WbFqk1clDg'];
-let currentKeyIndex = 0;
+// API keys for newscatcherapi and newsapi.org
+const API_KEYS_NEWSCATCHER = ['rmt7lFVU2HTrio72Ej6F9t4AE6fnpuYSlOrXhjX50Q8', 'P3BRAgk3JTlgCj4BbHpsIrOBleKSEttzA2HOwDglfrk', 'UhEM6sCXRqA_ge-gfOiEXzAOAODhv9kB9WbFqk1clDg'];
+const API_KEYS_NEWSAPI = ['cab817200f92426bacb4edd2373e82ef', '429904aa01f54a39a278a406acf50070', '28679d41d4454bffaf6a4f40d4b024cc', 'd9903836bbca401a856602f403802521', 'badecbdafe6a4be6a94086f2adfa9c06', '5fbf109857964643b73a2bc2540b36b6'];
+let currentKeyIndexNewscatcher = 0;
+let currentKeyIndexNewsApi = 0;
+let requestCountNewscatcher = 0;
+let requestCountNewsApi = 0;
 
 const app = express();
 const port = 3000;
@@ -91,22 +95,20 @@ app.get('/api/genius/:query', async (req, res) => {
   }
 });
 
-let requestCount = 0;
-
 app.get('/api/newscatcher/:query', async (req, res) => {
   const { query } = req.params;
 
   // Update the request count
-  requestCount++;
+  requestCountNewscatcher++;
 
   // If we've made 50 requests with the current key, move on to the next one
-  if (requestCount >= 50) {
-    currentKeyIndex = (currentKeyIndex + 1) % API_KEYS.length;
-    requestCount = 0;  // Reset the request count
+  if (requestCountNewscatcher >= 50) {
+    currentKeyIndexNewscatcher = (currentKeyIndexNewscatcher + 1) % API_KEYS_NEWSCATCHER.length;
+    requestCountNewscatcher = 0;  // Reset the request count
   }
 
   try {
-    const currentKey = API_KEYS[currentKeyIndex];
+    const currentKey = API_KEYS_NEWSCATCHER[currentKeyIndexNewscatcher];
     console.log(`Using key: ${currentKey}`);  // Log the current key
 
     const response = await fetch(`https://api.newscatcherapi.com/v2/search?q=${query}`, {
@@ -126,6 +128,38 @@ app.get('/api/newscatcher/:query', async (req, res) => {
   } catch (err) {
     console.error(err);
     res.status(500).json({ message: 'An error occurred while fetching data from Newscatcher.' });
+  }
+});
+
+app.get('/api/newsapi/:query', async (req, res) => {
+  const { query } = req.params;
+
+  // Update the request count
+  requestCountNewsApi++;
+
+  // If we've made 100 requests with the current key, move on to the next one
+  if (requestCountNewsApi >= 100) {
+    currentKeyIndexNewsApi = (currentKeyIndexNewsApi + 1) % API_KEYS_NEWSAPI.length;
+    requestCountNewsApi = 0;  // Reset the request count
+  }
+
+  try {
+    const currentKey = API_KEYS_NEWSAPI[currentKeyIndexNewsApi];
+    console.log(`Using key: ${currentKey}`);  // Log the current key
+
+    const response = await fetch(`https://newsapi.org/v2/everything?q=${query}&apiKey=${currentKey}`);
+    
+    console.log(`Response status: ${response.status}`);  // Log the response status
+
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+    
+    const data = await response.json();
+    res.json(data);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: 'An error occurred while fetching data from NewsAPI.' });
   }
 });
 

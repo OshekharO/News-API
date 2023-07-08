@@ -40,7 +40,10 @@ app.get('/', (req, res) => {
           <li class="list-group-item"><a href="/api/news/inshorts">/api/news/inshorts</a> - Fetches news from Inshorts. Use ?query= to search for news.</li>
           <li class="list-group-item"><a href="/api/news/us-tech">/api/news/us-tech</a> - Fetches top headlines in the technology category from the US</li>
           <li class="list-group-item"><a href="/api/news/in-tech">/api/news/in-tech</a> - Fetches top headlines in the technology category from India</li>
-          <li class="list-group-item"><a href="/api/torrent/piratebay/avengers/1">/api/torrent/piratebay/:query/:page?</a> - Fetches torrents data from PirateBay. Replace piratebay with yts, nyaasi or 1337x. Replace :query with your search query. :page is optional and defaults to 1.</li>
+          <li class="list-group-item"><a href="/api/torrent/piratebay/:query/:page">/api/torrent/piratebay/:query/:page?</a> - Fetches torrents data from PirateBay. Replace piratebay with yts, nyaasi or 1337x. Replace :query with your search query. :page is optional and defaults to 1.</li>
+          <li class="list-group-item"><a href="/api/genius/:query">/api/genius/:query</a> - Fetches data from Genius</li>
+          <li class="list-group-item"><a href="/api/newscatcher/:query">/api/newscatcher/:query</a> - Fetches data from Newscatcher</li>
+          <li class="list-group-item"><a href="/api/newsapi/:query">/api/newsapi/:query</a> - Fetches data from Newsapi</li>
         </ul>
       </div>
     </body>

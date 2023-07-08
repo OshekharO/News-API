@@ -101,10 +101,9 @@ app.get('/api/newscatcher/:query', async (req, res) => {
     const currentKey = API_KEYS[currentKeyIndex];
     console.log(`Using key: ${currentKey}`);  // Log the current key
 
-    const response = await fetch(`https://newscatcher.p.rapidapi.com/v1/search?q=${query}`, {
+    const response = await fetch(`https://api.newscatcherapi.com/v2/search?q=${query}`, {
       headers: {
-        "x-rapidapi-host": "free-news.p.rapidapi.com",
-        'x-rapidapi-key': "a88be3b532msh436d515e78b0c7ap104f31jsnfccd6e30053c"
+        'x-api-key': currentKey
       }
     });
     

@@ -7,7 +7,7 @@ const { torrent1337x } = require('./scraper/1337x');
 const { nyaaSI } = require('./scraper/nyaaSI');
 const { yts } = require('./scraper/yts');
 // API keys and index
-const API_KEYS = ['rmt7lFVU2HTrio72Ej6F9t4AE6fnpuYSlOrXhjX50Q8', 'P3BRAgk3JTlgCj4BbHpsIrOBleKSEttzA2HOwDglfrk', 'a88be3b532msh436d515e78b0c7ap104f31jsnfccd6e30053c,];
+const API_KEYS = ['rmt7lFVU2HTrio72Ej6F9t4AE6fnpuYSlOrXhjX50Q8', 'P3BRAgk3JTlgCj4BbHpsIrOBleKSEttzA2HOwDglfrk', 'a88be3b532msh436d515e78b0c7ap104f31jsnfccd6e30053c'];
 let currentKeyIndex = 0;
 
 const app = express();

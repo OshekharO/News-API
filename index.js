@@ -119,6 +119,9 @@ body {
 
 <h2>Additional APIs Category</h2>
 
+<h3>GET /api/porno</h3>
+<p>Fetches adult shorts from TikPornTok.</p>
+
 <h3>GET /api/genius/:query</h3>
 <p>Fetches data from Genius API.</p>
 

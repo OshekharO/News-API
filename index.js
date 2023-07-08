@@ -6,6 +6,7 @@ const { pirateBay } = require('./scraper/pirateBay');
 const { torrent1337x } = require('./scraper/1337x');
 const { nyaaSI } = require('./scraper/nyaaSI');
 const { yts } = require('./scraper/yts');
+const { spankbangVideo, spankbangTrending } = require('./scraper/spankbang');
 const { porno } = require('./scraper/porno');
 // API keys for newscatcherapi and newsapi.org
 const API_KEYS_NEWSCATCHER = ['rmt7lFVU2HTrio72Ej6F9t4AE6fnpuYSlOrXhjX50Q8', 'P3BRAgk3JTlgCj4BbHpsIrOBleKSEttzA2HOwDglfrk', 'UhEM6sCXRqA_ge-gfOiEXzAOAODhv9kB9WbFqk1clDg'];
@@ -167,6 +168,30 @@ async function handleScrapingRequest(scraperFunction, query, page, res) {
     res.status(500).json({ message: 'An error occurred while scraping torrents data.' });
   }
 }
+
+// Route for getting a Spankbang video details by video ID
+app.get('/api/spankbang/video/:videoId', async (req, res) => {
+  const { videoId } = req.params;
+  try {
+    const video = await spankbangVideo(videoId);
+    res.json(video);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: 'An error occurred while fetching Spankbang video details.' });
+  }
+});
+
+// Route for getting trending videos on Spankbang
+app.get('/api/spankbang/trending/:page?', async (req, res) => {
+  const { page = 1 } = req.params;
+  try {
+    const videos = await spankbangTrending(page);
+    res.json(videos);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: 'An error occurred while fetching Spankbang trending videos.' });
+  }
+});
 
 app.get('/api/porno', async (req, res) => {
     try {

@@ -6,22 +6,7 @@ The server is built using Node.js and Express and is hosted on Vercel.
 
 ## Endpoints
 
-There are two endpoints available:
-
-1. `/api/news/ann` - Fetches news from AnimeNewsNetwork.
-   * Example: `https://news-api-six-navy.vercel.app/api/news/ann`
-   
-2. `/api/news/inshorts` - Fetches news from Inshorts. You can also provide a query parameter to search for news.
-   * Example: `https://news-api-six-navy.vercel.app/api/news/inshorts?query=covid`
-  
-3. `/api/news/in-tech` - Fetches top headlines in the technology category from the india.
-   * Example: `https://news-api-six-navy.vercel.app/api/news/in-tech`
-
-4. `/api/news/us-tech` - Fetches top headlines in the technology category from the US.
-   * Example: `https://news-api-six-navy.vercel.app/api/news/us-tech`
-  
-5. `/api/torrent/:website/:query/:page?` - Fetches torrents data from PirateBay. Replace piratebay with yts, nyaasi or 1337x. Replace :query with your search query. :page is optional and defaults to 1.
-   * Example: `https://news-api-six-navy.vercel.app/api/torrent/piratebay/avengers/1`
+- `https://news-api.cyclic.app`
 
 ## Response
 
@@ -39,5 +24,8 @@ Example using JavaScript's fetch API to fetch news from AnimeNewsNetwork:
 fetch('https://news-api-six-navy.vercel.app/api/news/ann')
   .then(response => response.json())
   .then(data => console.log(data));
+```
 
+## Acknowledgements
 
+- OpenAI GPT-4: for code review and suggestions

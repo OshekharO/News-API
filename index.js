@@ -6,6 +6,9 @@ const { pirateBay } = require('./scraper/pirateBay');
 const { torrent1337x } = require('./scraper/1337x');
 const { nyaaSI } = require('./scraper/nyaaSI');
 const { yts } = require('./scraper/yts');
+// API keys and index
+const API_KEYS = ['rmt7lFVU2HTrio72Ej6F9t4AE6fnpuYSlOrXhjX50Q8', 'o7m9aVqJxEd2xKm6WMTUn7ZdiDMYfkfqgsxC3a7Woxs', '81Ntaip7kgNy-cZPBNpzfWRhCOjjnIDj5jnuWlAgCkQ'];
+let currentKeyIndex = 0;
 
 const app = express();
 const port = 3000;
@@ -85,6 +88,31 @@ app.get('/api/genius/:query', async (req, res) => {
   } catch (err) {
     console.error(err);
     res.status(500).json({ message: 'An error occurred while fetching data from Genius.' });
+  }
+});
+
+app.get('/api/news/newscatcher/:query', async (req, res) => {
+  const { query } = req.params;
+  
+  try {
+    const response = await fetch(`https://api.newscatcherapi.com/v2/search?q=${query}`, {
+      headers: {
+        'x-api-key': API_KEYS[currentKeyIndex]
+      }
+    });
+    
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+    
+    const data = await response.json();
+    res.json(data);
+
+    // Rotate the API key
+    currentKeyIndex = (currentKeyIndex + 1) % API_KEYS.length;
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: 'An error occurred while fetching news data.' });
   }
 });
 

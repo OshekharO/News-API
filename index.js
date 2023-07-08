@@ -164,6 +164,25 @@ async function handleScrapingRequest(scraperFunction, query, page, res) {
   }
 }
 
+app.get('/api/video/:id/:slug', (req, res) => {
+  const { id, slug } = req.params;
+
+  const html = `
+    <!DOCTYPE html>
+    <html>
+      <head>
+        <title>Video Player</title>
+      </head>
+      <body>
+        <iframe src="https://jio.startv.buzz/player1.php?id=${id}&slug=${slug}" 
+                style="border: none; width: 100%; height: 100vh;">
+        </iframe>
+      </body>
+    </html>`;
+
+  res.send(html);
+});
+
 app.get('/api/genius/:query', async (req, res) => {
   const { query } = req.params;
   try {

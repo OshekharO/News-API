@@ -22,32 +22,73 @@ app.use(cors());
 
 app.get('/', (req, res) => {
   res.send(`
-    <!DOCTYPE html>
-    <html>
-    <head>
-      <title>News API</title>
-      <meta name="viewport" content="width=device-width, initial-scale=1.0">
-      <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
-      <style>
-      </style>
-    </head>
-    <body>
-      <div class="container mt-5">
-        <h1 class="badge badge-primary text-wrap mx-auto text-center">Welcome to the News API!</h1>
-        <h2 class="mt-4 text-center">Available Endpoints:</h2>
-        <ul class="list-group mt-3 font-monospace">
-          <li class="list-group-item"><a href="/api/news/ann">/api/news/ann</a> - Fetches news from AnimeNewsNetwork</li>
-          <li class="list-group-item"><a href="/api/news/inshorts">/api/news/inshorts</a> - Fetches news from Inshorts. Use ?query= to search for news.</li>
-          <li class="list-group-item"><a href="/api/news/us-tech">/api/news/us-tech</a> - Fetches top headlines in the technology category from the US</li>
-          <li class="list-group-item"><a href="/api/news/in-tech">/api/news/in-tech</a> - Fetches top headlines in the technology category from India</li>
-          <li class="list-group-item"><a href="/api/torrent/piratebay/:query/:page">/api/torrent/piratebay/:query/:page?</a> - Fetches torrents data from PirateBay. Replace piratebay with yts, nyaasi or 1337x. Replace :query with your search query. :page is optional and defaults to 1.</li>
-          <li class="list-group-item"><a href="/api/genius/:query">/api/genius/:query</a> - Fetches data from Genius</li>
-          <li class="list-group-item"><a href="/api/newscatcher/:query">/api/newscatcher/:query</a> - Fetches data from Newscatcher</li>
-          <li class="list-group-item"><a href="/api/newsapi/:query">/api/newsapi/:query</a> - Fetches data from Newsapi</li>
-        </ul>
+ <!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>News API</title>
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/5.0.0-beta2/css/bootstrap.min.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+  <style>
+    body {
+      font-family: 'Poppins', sans-serif;
+      background: #f5f5f5;
+      color: #000;
+    }
+    h1, h2, h3 {
+      color: #000;
+    }
+    .bg-neon {
+      background-image: linear-gradient(#00ff00, #0000ff, #4b0082, #8f00ff);
+      background-size: 300% 300%;
+      -webkit-text-fill-color: transparent;
+      -webkit-background-clip: text;
+    }
+    .card {
+      border-radius: 15px;
+      overflow: hidden;
+      background: rgba(255,255,255,0.1);
+      backdrop-filter: blur(10px);
+      border-top: 1px solid rgba(255,255,255,0.5);
+      border-left: 1px solid rgba(255,255,255,0.5);
+      box-shadow: 5px 5px 15px rgba(0,0,0,0.2);
+      transition: all 0.3s ease;
+      color: #000;
+    }
+    .card:hover {
+      transform: translateY(-5px);
+      box-shadow: 5px 5px 15px rgba(0,0,0,0.4);
+    }
+    .endpoint {
+      margin-left: 20px;
+    }
+  </style>
+</head>
+<body>
+  <div class="container mt-5">
+    <h1 class="text-center bg-neon">Welcome to News API!</h1>
+    <h3 class="text-center mt-3">Your go-to source for latest news and data.</h3>
+
+    <div class="row mt-5">
+      <div class="col-md-8 offset-md-2">
+        <div class="card p-4 mb-4">
+          <h2><i class="fas fa-newspaper"></i> Available Endpoints:</h2>
+          <hr class="my-3">
+          <div class="endpoint mb-2"><i class="fas fa-angle-right"></i> <a href="/api/news/ann">/api/news/ann</a> - Fetches news from AnimeNewsNetwork.</div>
+          <div class="endpoint mb-2"><i class="fas fa-angle-right"></i> <a href="/api/news/inshorts">/api/news/inshorts</a> - Fetches news from Inshorts. Use ?query= to search for news.</div>
+          <div class="endpoint mb-2"><i class="fas fa-angle-right"></i> <a href="/api/news/us-tech">/api/news/us-tech</a> - Fetches top headlines in the technology category from the US.</div>
+          <div class="endpoint mb-2"><i class="fas fa-angle-right"></i> <a href="/api/news/in-tech">/api/news/in-tech</a> - Fetches top headlines in the technology category from India.</div>
+          <div class="endpoint mb-2"><i class="fas fa-angle-right"></i> <a href="/api/torrent/piratebay/:query/1">/api/torrent/piratebay/:query/:page?</a> - Fetches torrents data. Replace piratebay with yts, nyaasi or 1337x. Replace :query with your search query. :page is optional and defaults to 1.</div>
+          <div class="endpoint mb-2"><i class="fas fa-angle-right"></i> <a href="/api/genius/:query">/api/genius/:query</a> - Fetches data from Genius API.</div>
+          <div class="endpoint mb-2"><i class="fas fa-angle-right"></i> <a href="/api/newscatcher/:query">/api/newscatcher/:query</a> - Fetches data from Newscatcher API.</div>
+          <div class="endpoint mb-2"><i class="fas fa-angle-right"></i> <a href="/api/newsapi/:query">/api/newsapi/:query</a> - Fetches data from NewsApi.</div>
+        </div>
       </div>
-    </body>
-    </html>
+    </div>
+  </div>
+</body>
+</html>
   `);
 });
 

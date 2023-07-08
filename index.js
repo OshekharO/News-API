@@ -100,7 +100,7 @@ app.get('/api/newscatcher/:query', async (req, res) => {
   try {
     const response = await fetch(`https://api.newscatcherapi.com/v2/search?q=${query}`, {
       headers: {
-        'x-api-key': API_KEYS[currentKeyIndex]
+        'x-api-key': 'rmt7lFVU2HTrio72Ej6F9t4AE6fnpuYSlOrXhjX50Q8'
       }
     });
     

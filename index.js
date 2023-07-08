@@ -98,12 +98,17 @@ app.get('/api/newscatcher/:query', async (req, res) => {
   currentKeyIndex = (currentKeyIndex + 1) % API_KEYS.length;
   
   try {
+    const currentKey = API_KEYS[currentKeyIndex];
+    console.log(`Using key: ${currentKey}`);  // Log the current key
+
     const response = await fetch(`https://api.newscatcherapi.com/v2/search?q=${query}`, {
       headers: {
-        'x-api-key': 'rmt7lFVU2HTrio72Ej6F9t4AE6fnpuYSlOrXhjX50Q8'
+        'x-api-key': currentKey
       }
     });
     
+    console.log(`Response status: ${response.status}`);  // Log the response status
+
     if (!response.ok) {
       throw new Error(`HTTP error! status: ${response.status}`);
     }

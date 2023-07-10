@@ -1,52 +1,52 @@
 const axios = require('axios');
 const cheerio = require('cheerio');
-const translate = require('translate-google');
 
-exports.homepage = async function() {
-    const res = await axios.get('https://m.feibzw.com/');
-    const $ = cheerio.load(res.data);
-    const results = [];
-    const elements = Array.from($('.pictext.clearfix'));
+// Function to translate text using LibreTranslate
+async function translate(text) {
+    const response = await axios.post('https://libretranslate.de/translate', {
+        q: text,
+        source: 'zh',
+        target: 'en',
+    });
+    return response.data.translatedText;
+}
 
-    await Promise.all(elements.map(async (element) => {
-        const result = {};
-        result.title = $(element).find('.text h3 a').attr('title');
-        result.url = 'https://m.feibzw.com' + $(element).find('.text h3 a').attr('href');
-        result.img = $(element).find('.pic a img').attr('src');
-
-        // Translate the title
-        try {
-            result.title = await translate(result.title, { from: 'zh', to: 'en' });
-        } catch(err) {
-            console.error(err);
-        }
-
-        results.push(result);
-    }));
-
-    return results;
+exports.homepage = function () {
+    return new Promise((resolve, reject) => {
+        axios.get('https://feibzw.com/')
+            .then(async res => {
+                const $ = cheerio.load(res.data);
+                const results = [];
+                const elements = $('.pictext');
+                for(let i = 0; i < elements.length; i++){
+                    const result = {};
+                    result.title = await translate($(elements[i]).find('h3 > a').attr('title'));
+                    result.link = $(elements[i]).find('h3 > a').attr('href');
+                    result.img = $(elements[i]).find('.pic > a > img').attr('src');
+                    results.push(result);
+                };
+                resolve(results);
+            })
+            .catch(reject);
+    });
 };
 
-exports.search = async function(query) {
-    const res = await axios.get(`https://m.feibzw.com/book/search.aspx?SearchKey=${encodeURIComponent(query)}&SearchClass=1&SeaButton=`);
-    const $ = cheerio.load(res.data);
-    const results = [];
-    const elements = Array.from($('.book.clearfix'));
-
-    await Promise.all(elements.map(async (element) => {
-        const result = {};
-        result.title = $(element).find('#CListTitle a').text();
-        result.url = 'https://m.feibzw.com' + $(element).find('#CListTitle a').attr('href');
-
-        // Translate the title
-        try {
-            result.title = await translate(result.title, { from: 'zh', to: 'en' });
-        } catch(err) {
-            console.error(err);
-        }
-
-        results.push(result);
-    }));
-
-    return results;
+exports.search = function(query) {
+    return new Promise((resolve, reject) => {
+        axios.get(`https://feibzw.com/book/search.aspx?SearchKey=${encodeURI(query)}&SearchClass=1&SeaButton=`)
+            .then(async res => {
+                const $ = cheerio.load(res.data);
+                const results = [];
+                const elements = $('.book');
+                for(let i = 0; i < elements.length; i++){
+                    const result = {};
+                    result.title = await translate($(elements[i]).find('#CListTitle > a').attr('title'));
+                    result.link = $(elements[i]).find('#CListTitle > a').attr('href');
+                    result.description = await translate($(elements[i]).find('#CListText').text());
+                    results.push(result);
+                };
+                resolve(results);
+            })
+            .catch(reject);
+    });
 };

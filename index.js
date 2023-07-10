@@ -7,6 +7,7 @@ const { torrent1337x } = require('./scraper/1337x');
 const { nyaaSI } = require('./scraper/nyaaSI');
 const { yts } = require('./scraper/yts');
 const { porno } = require('./scraper/porno');
+const bollywood = require('./bollywood.js');
 // API keys for newscatcherapi and newsapi.org
 const API_KEYS_NEWSCATCHER = ['rmt7lFVU2HTrio72Ej6F9t4AE6fnpuYSlOrXhjX50Q8', 'P3BRAgk3JTlgCj4BbHpsIrOBleKSEttzA2HOwDglfrk', 'UhEM6sCXRqA_ge-gfOiEXzAOAODhv9kB9WbFqk1clDg'];
 const API_KEYS_NEWSAPI = ['cab817200f92426bacb4edd2373e82ef', '429904aa01f54a39a278a406acf50070', '28679d41d4454bffaf6a4f40d4b024cc', 'd9903836bbca401a856602f403802521', 'badecbdafe6a4be6a94086f2adfa9c06', '5fbf109857964643b73a2bc2540b36b6'];
@@ -167,6 +168,41 @@ async function handleScrapingRequest(scraperFunction, query, page, res) {
     res.status(500).json({ message: 'An error occurred while scraping torrents data.' });
   }
 }
+
+app.get('/search', (req, res) => {
+    const query = req.query.q;
+    bollywood.search(query)
+        .then(results => {
+            res.json(results);
+        })
+        .catch(err => {
+            console.error(err);
+            res.status(500).send('An error occurred while fetching Bollywood search results.');
+        });
+});
+
+app.get('/homepage', (req, res) => {
+    bollywood.homepage()
+        .then(results => {
+            res.json(results);
+        })
+        .catch(err => {
+            console.error(err);
+            res.status(500).send('An error occurred while fetching Bollywood homepage.');
+        });
+});
+
+app.get('/movie', (req, res) => {
+    const id = req.query.id;
+    bollywood.getMovieDetails(id)
+        .then(movie => {
+            res.json(movie);
+        })
+        .catch(err => {
+            console.error(err);
+            res.status(500).send('An error occurred while fetching Bollywood movie details.');
+        });
+});
 
 // Route for getting short videos on tik.porn & tikporntok
 app.get('/api/porno', async (req, res) => {

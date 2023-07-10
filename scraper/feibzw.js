@@ -1,30 +1,19 @@
 const axios = require('axios');
 const cheerio = require('cheerio');
 
-// Function to translate text using LibreTranslate
-async function translate(text) {
-    const response = await axios.post('https://translate.argosopentech.com/translate', {
-        q: text,
-        source: 'zh',
-        target: 'en',
-    });
-    return response.data.translatedText;
-}
-
-exports.homepage = function () {
+exports.homepage = function() {
     return new Promise((resolve, reject) => {
-        axios.get('https://feibzw.com/')
-            .then(async res => {
+        axios.get('https://feibzw.com')
+            .then(res => {
                 const $ = cheerio.load(res.data);
                 const results = [];
-                const elements = $('.pictext');
-                for(let i = 0; i < elements.length; i++){
+                $('#moviesRow .movie-card').each((index, element) => {
                     const result = {};
-                    result.title = await translate($(elements[i]).find('h3 > a').attr('title'));
-                    result.link = $(elements[i]).find('h3 > a').attr('href');
-                    result.img = $(elements[i]).find('.pic > a > img').attr('src');
+                    result.title = $(element).find('.movie-info').first().text();
+                    result.tmdbId = $(element).find('.movie-info').last().text().replace('TMDB ID: ', '');
+                    result.img = $(element).find('.clickable-poster').attr('src');
                     results.push(result);
-                };
+                });
                 resolve(results);
             })
             .catch(reject);
@@ -33,18 +22,16 @@ exports.homepage = function () {
 
 exports.search = function(query) {
     return new Promise((resolve, reject) => {
-        axios.get(`https://feibzw.com/book/search.aspx?SearchKey=${encodeURI(query)}&SearchClass=1&SeaButton=`)
-            .then(async res => {
+        axios.get(`https://feibzw.com/book/search.aspx?SearchKey=${encodeURIComponent(query)}&SearchClass=1&SeaButton=`)
+            .then(res => {
                 const $ = cheerio.load(res.data);
                 const results = [];
-                const elements = $('.book');
-                for(let i = 0; i < elements.length; i++){
+                $('.book.clearfix').each((index, element) => {
                     const result = {};
-                    result.title = await translate($(elements[i]).find('#CListTitle > a').attr('title'));
-                    result.link = $(elements[i]).find('#CListTitle > a').attr('href');
-                    result.description = await translate($(elements[i]).find('#CListText').text());
+                    result.title = $(element).find('#CListTitle a').text();
+                    result.description = $(element).find('#CListText').text();
                     results.push(result);
-                };
+                });
                 resolve(results);
             })
             .catch(reject);

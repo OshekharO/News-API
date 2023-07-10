@@ -3,7 +3,7 @@ const cheerio = require('cheerio');
 
 // Function to translate text using LibreTranslate
 async function translate(text) {
-    const response = await axios.post('https://libretranslate.de/translate', {
+    const response = await axios.post('https://translate.argosopentech.com/translate', {
         q: text,
         source: 'zh',
         target: 'en',

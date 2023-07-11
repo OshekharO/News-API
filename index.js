@@ -249,20 +249,19 @@ app.get('/api/newsapi/:query', async (req, res) => {
   }
 });
 
-// Route for getting technology news in the US
-app.get('/api/news/us-tech', (req, res) => {
-  fetch('https://saurav.tech/NewsAPI/top-headlines/category/technology/us.json')
+const fetchNews = (category, country, res) => {
+  fetch(`https://saurav.tech/NewsAPI/top-headlines/category/${category}/${country}.json`)
     .then(response => response.json())
     .then(data => res.json(data))
     .catch(err => res.status(500).json({ error: err.toString() }));
+};
+
+app.get('/api/news/us-tech', (req, res) => {
+  fetchNews('technology', 'us', res);
 });
 
-// Route for getting technology news in India
 app.get('/api/news/in-tech', (req, res) => {
-  fetch('https://saurav.tech/NewsAPI/top-headlines/category/technology/in.json')
-    .then(response => response.json())
-    .then(data => res.json(data))
-    .catch(err => res.status(500).json({ error: err.toString() }));
+  fetchNews('technology', 'in', res);
 });
 
 app.get('/api/news/:source', async (req, res) => {

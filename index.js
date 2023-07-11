@@ -266,23 +266,21 @@ app.get('/api/news/in-tech', (req, res) => {
 
 app.get('/api/news/:source', async (req, res) => {
   const { source } = req.params;
-  const { query } = req.query; // Access query parameter from the request
+  const { query } = req.query; 
 
-  let url;
-  if (source === 'ann') {
-    url = 'https://api.consumet.org/news/ann/recent-feeds';
-  } else if (source === 'inshorts') {
-    if(query) {
-      url = `https://inshorts.me/news/search?query=${query}&offset=0&limit=20`;
-    } else {
-      url = 'https://inshorts.me/news/all?offset=0&limit=20';
-    }
-  } else {
+  const sourceToUrlMap = {
+    ann: 'https://api.consumet.org/news/ann/recent-feeds',
+    inshorts: query 
+        ? `https://inshorts.me/news/search?query=${query}&offset=0&limit=20`
+        : 'https://inshorts.me/news/all?offset=0&limit=20'
+  };
+
+  if (!sourceToUrlMap.hasOwnProperty(source)) {
     return res.status(400).send('Invalid source');
   }
 
   try {
-    const response = await fetch(url);
+    const response = await fetch(sourceToUrlMap[source]);
     const data = await response.json();
     res.json(data);
   } catch (error) {

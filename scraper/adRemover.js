@@ -11,9 +11,6 @@ exports.removeAds = function(url) {
             $('#adsbygoogle').remove();
             $('#googletags').remove();
 
-            // Remove script tags
-            $('script').remove();
-
             resolve($.html());
         } catch (error) {
             console.error(error);

@@ -136,47 +136,34 @@ body {
   `);
 });
 
-app.get('/api/torrent/piratebay/:query/:page?', async (req, res) => {
-  const { query, page = 1 } = req.params;
-  handleScrapingRequest(pirateBay, query, page, res);
-});
-
-app.get('/api/torrent/1337x/:query/:page?', async (req, res) => {
-  const { query, page = 1 } = req.params;
-  handleScrapingRequest(torrent1337x, query, page, res);
-});
-
-app.get('/api/torrent/nyaasi/:query/:page?', async (req, res) => {
-  const { query, page = 1 } = req.params;
-  handleScrapingRequest(nyaaSI, query, page, res);
-});
-
-app.get('/api/torrent/yts/:query/:page?', async (req, res) => {
-  const { query, page = 1 } = req.params;
-  handleScrapingRequest(yts, query, page, res);
-});
+app.get('/api/torrent/piratebay/:query/:page?', createScrapeRoute(pirateBay));
+app.get('/api/torrent/1337x/:query/:page?', createScrapeRoute(torrent1337x));
+app.get('/api/torrent/nyaasi/:query/:page?', createScrapeRoute(nyaaSI));
+app.get('/api/torrent/yts/:query/:page?', createScrapeRoute(yts));
 
 // Generic function to handle scraping requests
-async function handleScrapingRequest(scraperFunction, query, page, res) {
-  try {
-    // Use the scraper function instead of fetching the API
-    const data = await scraperFunction(query, page);
-    res.json(data);
-  } catch (err) {
-    console.error(err);
-    res.status(500).json({ message: 'An error occurred while scraping torrents data.' });
-  }
+function createScrapeRoute(scraperFunction) {
+  return async (req, res) => {
+    const { query, page = 1 } = req.params;
+    try {
+      const data = await scraperFunction(query, page);
+      res.json(data);
+    } catch (err) {
+      console.error(err);
+      res.status(500).json({ message: 'An error occurred while scraping torrents data.' });
+    }
+  };
 }
 
 // Route for getting short videos on tik.porn & tikporntok
 app.get('/api/porno', async (req, res) => {
-    try {
-        const data = await porno();
-        res.json(data);
-    } catch (err) {
-        console.error(err);
-        res.status(500).json({ message: 'An error occurred while scraping data.' });
-    }
+  try {
+    const data = await porno();
+    res.json(data);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: 'An error occurred while scraping data.' });
+  }
 });
 
 app.get('/api/genius/:query', async (req, res) => {

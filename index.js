@@ -154,7 +154,6 @@ function createScrapeRoute(scraperFunction) {
 
 const urls = [
   'http://us1-external-sources.iptvserver.tv/get.php?username=kkkrkDp2a9KNwAwGzpb&password=QT94uK5NNQw4r4Qs&type=m3u',
-  'http://flix12.site:8080/get.php?username=vd2tYiXBsr&password=kc8wbU8pBE&type=m3u',
   'http://ipro.webvps.de:25443/get.php?username=V5ZnXCoVB2Vq&password=nY8wSJti4C&type=m3u'
 ];
 

@@ -152,24 +152,6 @@ function createScrapeRoute(scraperFunction) {
   };
 }
 
-const urls = [
-  'http://us1-external-sources.iptvserver.tv/get.php?username=kkkrkDp2a9KNwAwGzpb&password=QT94uK5NNQw4r4Qs&type=m3u',
-  'http://ipro.webvps.de:25443/get.php?username=V5ZnXCoVB2Vq&password=nY8wSJti4C&type=m3u'
-];
-
-async function fetchM3Us() {
-  // Fetch all m3us in parallel
-  const responses = await Promise.all(urls.map(url => axios.get(url)));
-  // Combine all m3u contents into a single string
-  return responses.map(res => res.data).join('\n');
-}
-
-app.get('/combined.m3u', async (req, res) => {
-  const combinedM3U = await fetchM3Us();
-  res.set('Content-Type', 'audio/x-mpegurl'); // Set the correct content type for m3u
-  res.send(combinedM3U);
-});
-
 app.get('/api/genius/:query', async (req, res) => {
   const { query } = req.params;
   try {

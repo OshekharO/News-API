@@ -137,6 +137,9 @@ body {
 <h3>GET /api/genius/:query</h3>
 <p>Fetches lyrics from Genius.</p>
 
+<h3>GET /api/person/:num?</h3>
+<p>Fetches random details from API.</p>
+
 <h3>GET /api/jokes/:query</h3>
 <p>Fetches jokes from Chucknorris.</p>
 </main>
@@ -163,6 +166,22 @@ function createScrapeRoute(scraperFunction) {
     }
   };
 }
+
+app.get('/api/person/:num?', async (req, res) => {
+  try {
+    const num = req.params.num || 1;
+    const url = `https://peoplegeneratorapi.live/api/person/${num}`;
+
+    const response = await axios.get(url);
+    const prettyJson = JSON.stringify(response.data, null, 2); // This will format the JSON with 2 spaces of indentation
+
+    res.setHeader('Content-Type', 'application/json');
+    res.send(prettyJson);
+  } catch (error) {
+    console.error('Error:', error);
+    res.status(500).send('Server error');
+  }
+});
 
 app.get('/api/peakpx/:query/:page?', async (req, res) => {
     const { query, page = 1 } = req.params;

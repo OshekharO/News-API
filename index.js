@@ -1,4 +1,4 @@
-const express = require('express');
+,const express = require('express');
 const fetch = require('node-fetch');
 const cors = require('cors');
 const axios = require('axios');
@@ -172,18 +172,16 @@ app.get('/api/peakpx/:query/:page?', async (req, res) => {
         });
 });
 
-app.get('/api/slok/:ch?/:sl?', async (req, res) => {
-    const chapter = req.params.ch || '1';
-    const sloka = req.params.sl || '1';
-    try {
-        const response = await axios.get(`https://bhagavadgitaapi.in/slok/${chapter}/${sloka}`);
-        const prettyJson = JSON.stringify(response.data, null, 2); // This will format the JSON with 2 spaces of indentation
-        res.setHeader('Content-Type', 'application/json');
-        res.send(prettyJson);
-    } catch (error) {
-        console.error('Error:', error);
-        res.status(500).send('Server error');
-    }
+app.get('/api/slok', async (req, res) => {
+  try {
+    const response = await axios.get('https://bhagavadgitaapi.in/slok');
+    const prettyJson = JSON.stringify(response.data, null, 2); // This will format the JSON with 2 spaces of indentation
+    res.setHeader('Content-Type', 'application/json');
+    res.send(prettyJson);
+  } catch (error) {
+    console.error('Error:', error);
+    res.status(500).send('Server error');
+  }
 });
 
 app.get('/api/jokes/:query', async (req, res) => {

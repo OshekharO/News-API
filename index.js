@@ -169,12 +169,15 @@ app.get('/api/peakpx/:query/:page?', async (req, res) => {
         });
 });
 
-app.get('/api/chucknorris/:query', async (req, res) => {
+app.get('/api/jokes/:query', async (req, res) => {
   try {
     const response = await axios.get(`https://api.chucknorris.io/jokes/search?query=${req.params.query}`);
     const prettyJson = JSON.stringify(response.data, null, 2); // This will format the JSON with 2 spaces of indentation
     res.setHeader('Content-Type', 'application/json');
     res.send(prettyJson);
+  } catch (error) {
+    console.error('Error:', error);
+    res.status(500).send('Server error');
   }
 });
 

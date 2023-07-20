@@ -120,6 +120,9 @@ body {
 
 <h2>Additional APIs Category</h2>
 
+<h3>GET /api/peakpx/:query/:page?</h3>
+<p>Fetches img from peakpx. :page is optional and defaults to 1.</p>
+
 <h3>GET /api/genius/:query</h3>
 <p>Fetches data from Genius API.</p>
 

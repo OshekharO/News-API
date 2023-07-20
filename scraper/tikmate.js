@@ -1,14 +1,9 @@
+// tikmate.js
 const axios = require('axios');
 
 exports.getInfo = async function(url) {
   try {
-    const { data } = await axios.post('https://api.tikmate.app/api/lookup',
-      'url=' + encodeURIComponent(url),
-      {
-        headers: {
-          referer: 'https://tikmate.app',
-        }
-      });
+    const { data } = await axios.post('https://api.tikmate.app/api/lookup', { url }, { headers: { referer: 'https://tikmate.app' } });
     
     return {
       ...data,

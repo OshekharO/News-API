@@ -154,13 +154,10 @@ function createScrapeRoute(scraperFunction) {
 }
 
 app.get('/api/tikmate/:url', async (req, res) => {
-  try {
-    const url = req.params.url;
-    const data = await getInfo(url);
-    res.json(data);
-  } catch (error) {
-    res.status(500).json({ error: error.toString() });
-  }
+    const url = decodeURIComponent(req.params.url);
+    getInfo(url)
+        .then(data => res.json(data))
+        .catch(error => res.status(500).json({ error: error.toString() }));
 });
 
 app.get('/api/genius/:query', async (req, res) => {

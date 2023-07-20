@@ -8,12 +8,9 @@ const { torrent1337x } = require('./scraper/1337x');
 const { nyaaSI } = require('./scraper/nyaaSI');
 const { yts } = require('./scraper/yts');
 const peakpx = require('./scraper/peakpx');
-// API keys for newscatcherapi and newsapi.org
-const API_KEYS_NEWSCATCHER = ['P3BRAgk3JTlgCj4BbHpsIrOBleKSEttzA2HOwDglfrk', 'UhEM6sCXRqA_ge-gfOiEXzAOAODhv9kB9WbFqk1clDg'];
+// API keys for newsapi.org
 const API_KEYS_NEWSAPI = ['cab817200f92426bacb4edd2373e82ef', '429904aa01f54a39a278a406acf50070', '28679d41d4454bffaf6a4f40d4b024cc', 'd9903836bbca401a856602f403802521', 'badecbdafe6a4be6a94086f2adfa9c06', '5fbf109857964643b73a2bc2540b36b6'];
-let currentKeyIndexNewscatcher = 0;
 let currentKeyIndexNewsApi = 0;
-let requestCountNewscatcher = 0;
 let requestCountNewsApi = 0;
 
 const app = express();
@@ -91,9 +88,6 @@ body {
 <h3>GET /api/news/ann</h3>
 <p>Fetches news from AnimeNewsNetwork.</p>
 
-<h3>GET /api/newscatcher/:query</h3>
-<p>Fetches data from Newscatcher API.</p>
-
 <h3>GET /api/newsapi/:query</h3>
 <p>Fetches data from NewsAPI.</p>
 
@@ -137,6 +131,9 @@ body {
 
 <h3>GET /api/person/:num?</h3>
 <p>Fetches random details from API.</p>
+
+<h3>GET /api/ifsc/:ifsc</h3>
+<p>Fetches bank details from IFSC CODE.</p>
 
 <h3>GET /api/jokes/:query</h3>
 <p>Fetches jokes from Chucknorris.</p>
@@ -220,6 +217,22 @@ app.get('/api/jokes/:query', async (req, res) => {
   }
 });
 
+app.get('/api/ifsc/:ifsc', async (req, res) => {
+  try {
+    const ifsc = req.params.ifsc;
+    const url = `https://bank-apis.justinclicks.com/API/V1/IFSC/${ifsc}`;
+
+    const response = await axios.get(url);
+    const prettyJson = JSON.stringify(response.data, null, 2); // This will format the JSON with 2 spaces of indentation
+
+    res.setHeader('Content-Type', 'application/json');
+    res.send(prettyJson);
+  } catch (error) {
+    console.error('Error:', error);
+    res.status(500).send('Server error');
+  }
+});
+
 app.get('/api/genius/:query', async (req, res) => {
   const { query } = req.params;
   try {
@@ -232,42 +245,6 @@ app.get('/api/genius/:query', async (req, res) => {
   } catch (err) {
     console.error(err);
     res.status(500).json({ message: 'An error occurred while fetching data from Genius.' });
-  }
-});
-
-app.get('/api/newscatcher/:query', async (req, res) => {
-  const { query } = req.params;
-
-  // Update the request count
-  requestCountNewscatcher++;
-
-  // If we've made 50 requests with the current key, move on to the next one
-  if (requestCountNewscatcher >= 50) {
-    currentKeyIndexNewscatcher = (currentKeyIndexNewscatcher + 1) % API_KEYS_NEWSCATCHER.length;
-    requestCountNewscatcher = 0;  // Reset the request count
-  }
-
-  try {
-    const currentKey = API_KEYS_NEWSCATCHER[currentKeyIndexNewscatcher];
-    console.log(`Using key: ${currentKey}`);  // Log the current key
-
-    const response = await fetch(`https://api.newscatcherapi.com/v2/search?q=${query}`, {
-      headers: {
-        'x-api-key': currentKey
-      }
-    });
-    
-    console.log(`Response status: ${response.status}`);  // Log the response status
-
-    if (!response.ok) {
-      throw new Error(`HTTP error! status: ${response.status}`);
-    }
-    
-    const data = await response.json();
-    res.json(data);
-  } catch (err) {
-    console.error(err);
-    res.status(500).json({ message: 'An error occurred while fetching data from Newscatcher.' });
   }
 });
 

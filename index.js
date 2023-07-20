@@ -130,7 +130,7 @@ body {
 <p>Fetches img from peakpx. :page is optional and defaults to 1.</p>
 
 <h3>GET /api/genius/:query</h3>
-<p>Fetches data from Genius API.</p>
+<p>Fetches lyrics from Genius.</p>
 
 <h3>GET /api/jokes/:query</h3>
 <p>Fetches jokes from Chucknorris.</p>

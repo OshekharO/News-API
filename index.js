@@ -175,9 +175,6 @@ app.get('/api/chucknorris/:query', async (req, res) => {
     const prettyJson = JSON.stringify(response.data, null, 2); // This will format the JSON with 2 spaces of indentation
     res.setHeader('Content-Type', 'application/json');
     res.send(prettyJson);
-  } catch (error) {
-    console.error('Error:', error);
-    res.status(500).send('Server error');
   }
 });
 

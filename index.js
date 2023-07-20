@@ -91,6 +91,12 @@ body {
 <h3>GET /api/news/ann</h3>
 <p>Fetches news from AnimeNewsNetwork.</p>
 
+<h3>GET /api/newscatcher/:query</h3>
+<p>Fetches data from Newscatcher API.</p>
+
+<h3>GET /api/newsapi/:query</h3>
+<p>Fetches data from NewsAPI.</p>
+
 <h3>GET /api/news/inshorts</h3>
 <p>Fetches news from Inshorts. Use ?query= to search for news.</p>
 
@@ -126,11 +132,8 @@ body {
 <h3>GET /api/genius/:query</h3>
 <p>Fetches data from Genius API.</p>
 
-<h3>GET /api/newscatcher/:query</h3>
-<p>Fetches data from Newscatcher API.</p>
-
-<h3>GET /api/newsapi/:query</h3>
-<p>Fetches data from NewsAPI.</p>
+<h3>GET /api/jokes/:query</h3>
+<p>Fetches jokes from Chucknorris.</p>
 </main>
 </body>
 </html>

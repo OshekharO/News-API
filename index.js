@@ -155,7 +155,7 @@ function createScrapeRoute(scraperFunction) {
 
 app.get('/api/tikmate/:url', async (req, res) => {
   try {
-    const url = decodeURIComponent(req.params.url);
+    const url = req.params.url;
     const data = await getInfo(url);
     res.json(data);
   } catch (error) {

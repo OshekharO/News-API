@@ -7,7 +7,7 @@ const { pirateBay } = require('./scraper/pirateBay');
 const { torrent1337x } = require('./scraper/1337x');
 const { nyaaSI } = require('./scraper/nyaaSI');
 const { yts } = require('./scraper/yts');
-const { getInfo } = require('./scraper/tikmate');
+const { tikmateApp } = require('./scraper/tikmate');
 // API keys for newscatcherapi and newsapi.org
 const API_KEYS_NEWSCATCHER = ['rmt7lFVU2HTrio72Ej6F9t4AE6fnpuYSlOrXhjX50Q8', 'P3BRAgk3JTlgCj4BbHpsIrOBleKSEttzA2HOwDglfrk', 'UhEM6sCXRqA_ge-gfOiEXzAOAODhv9kB9WbFqk1clDg'];
 const API_KEYS_NEWSAPI = ['cab817200f92426bacb4edd2373e82ef', '429904aa01f54a39a278a406acf50070', '28679d41d4454bffaf6a4f40d4b024cc', 'd9903836bbca401a856602f403802521', 'badecbdafe6a4be6a94086f2adfa9c06', '5fbf109857964643b73a2bc2540b36b6'];
@@ -153,11 +153,17 @@ function createScrapeRoute(scraperFunction) {
   };
 }
 
-app.get('/api/tikmate/:url', async (req, res) => {
-    const url = decodeURIComponent(req.params.url);
-    getInfo(url)
-        .then(data => res.json(data))
-        .catch(error => res.status(500).json({ error: error.toString() }));
+app.get('/api/tikmate', async (req, res) => {
+    const tiktokUrl = req.query.url;
+    if(!tiktokUrl) return res.status(400).send({error: "Missing url query parameter"});
+  
+    try {
+        const data = await tikmateApp(tiktokUrl);
+        res.send(data);
+    } catch(err) {
+        console.error(err);
+        res.status(500).send({error: "Internal server error"});
+    }
 });
 
 app.get('/api/genius/:query', async (req, res) => {

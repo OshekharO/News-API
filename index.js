@@ -11,15 +11,12 @@ const peakpx = require('./scraper/peakpx');
 // API keys for newscatcherapi and newsapi.org
 const API_KEYS_NEWSCATCHER = ['rmt7lFVU2HTrio72Ej6F9t4AE6fnpuYSlOrXhjX50Q8', 'P3BRAgk3JTlgCj4BbHpsIrOBleKSEttzA2HOwDglfrk', 'UhEM6sCXRqA_ge-gfOiEXzAOAODhv9kB9WbFqk1clDg'];
 const API_KEYS_NEWSAPI = ['cab817200f92426bacb4edd2373e82ef', '429904aa01f54a39a278a406acf50070', '28679d41d4454bffaf6a4f40d4b024cc', 'd9903836bbca401a856602f403802521', 'badecbdafe6a4be6a94086f2adfa9c06', '5fbf109857964643b73a2bc2540b36b6'];
-const API_KEYS_BIBLE = ['5d9324630c852dcbd2bb643aa00d6987', '575ee0f3ddd09aef1529fb5847fb4370', '89d62a2b302639cf4656679406a616b3'];
 
-let currentKeyIndexBible = 0;
 let currentKeyIndexNewscatcher = 0;
 let currentKeyIndexNewsApi = 0;
 
 let requestCountNewscatcher = 0;
 let requestCountNewsApi = 0;
-let requestCountBible = 0;
 
 const app = express();
 const port = 3000;
@@ -203,40 +200,6 @@ app.get('/api/jokes/:query', async (req, res) => {
   } catch (error) {
     console.error('Error:', error);
     res.status(500).send('Server error');
-  }
-});
-
-app.get('/api/bible', async (req, res) => {
-  // Update the request count
-  requestCountBible++;
-
-  // If we've made 50 requests with the current key, move on to the next one
-  if (requestCountBible >= 50) {
-    currentKeyIndexBible = (currentKeyIndexBible + 1) % API_KEYS_BIBLE.length;
-    requestCountBible = 0;  // Reset the request count
-  }
-
-  try {
-    const currentKey = API_KEYS_BIBLE[currentKeyIndexBible];
-    console.log(`Using key: ${currentKey}`);  // Log the current key
-
-    const response = await axios.get('https://api.scripture.api.bible/v1/bibles', {
-      headers: {
-        'api-key': currentKey
-      }
-    });
-    
-    console.log(`Response status: ${response.status}`);  // Log the response status
-
-    if (!response.ok) {
-      throw new Error(`HTTP error! status: ${response.status}`);
-    }
-    
-    const data = response.data;
-    res.json(data);
-  } catch (err) {
-    console.error(err);
-    res.status(500).json({ message: 'An error occurred while fetching data from Bible API.' });
   }
 });
 

@@ -129,6 +129,9 @@ body {
 <h3>GET /api/genius/:query</h3>
 <p>Fetches lyrics from Genius.</p>
 
+<h3>GET /api/memes</h3>
+<p>Fetches memes from API.</p>
+
 <h3>GET /api/person/:num?</h3>
 <p>Fetches random details from API.</p>
 
@@ -172,6 +175,21 @@ app.get('/api/person/:num?', async (req, res) => {
 
     res.setHeader('Content-Type', 'application/json');
     res.send(prettyJson);
+  } catch (error) {
+    console.error('Error:', error);
+    res.status(500).send('Server error');
+  }
+});
+
+app.get('/api/memes', async (req, res) => {
+  try {
+    const response = await axios.get('https://api.imgflip.com/get_memes');
+    let data = response.data;
+    data = JSON.stringify(data, null, 2); // Prettify JSON
+    data = data.replace(/\\\//g, '/'); // Replace \/ with /
+
+    res.setHeader('Content-Type', 'application/json');
+    res.send(data);
   } catch (error) {
     console.error('Error:', error);
     res.status(500).send('Server error');

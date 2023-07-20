@@ -153,15 +153,17 @@ function createScrapeRoute(scraperFunction) {
   };
 }
 
-app.get('/api/peakpx/:query/:page', async (req, res) => {
-    try {
-        const { query, page } = req.params;
-        const results = await scrape(query, page);
-        res.json(results);
-    } catch (error) {
-        console.error('Error:', error);
-        res.status(500).send('Server error');
-    }
+app.get('/api/peakpx/:query/:page?', async (req, res) => {
+    const { query, page = 1 } = req.params;
+
+    peakpx.search(query, page)
+        .then(results => {
+            res.json(results);
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            res.status(500).json({ message: 'An error occurred while fetching peakpx images.' });
+        });
 });
 
 app.get('/api/genius/:query', async (req, res) => {

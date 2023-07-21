@@ -203,16 +203,14 @@ app.get('/api/youtube', async (req, res) => {
   }
 
   const encodedUrl = encodeURIComponent(url);
+  const token = 'cac09d4f19e67c603f127379cac7f51358a349952c05d414612ee9a7fe994bf7';
 
   try {
-    const response = await axios.post('https://givefastlink.com/wp-json/aio-dl/video-data/', {
-      url: encodedUrl,
-      token: 'cac09d4f19e67c603f127379cac7f51358a349952c05d414612ee9a7fe994bf7',
-    });
+    const response = await axios.get(`https://givefastlink.com/wp-json/aio-dl/video-data/?url=${encodedUrl}&token=${token}`);
 
     let data = response.data;
     data = JSON.stringify(data, null, 2); // Prettify JSON
-    data = data.replace(/\\\/\\\/g, '//'); // Replace \/\/ with //
+    data = data.replace(/\\\//g, '/'); / Replace \/\/ with //
 
     res.setHeader('Content-Type', 'application/json');
     res.send(data);

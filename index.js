@@ -213,7 +213,7 @@ app.get('/api/peakpx/:query/:page?', async (req, res) => {
 app.get('/api/pixiv', async (req, res) => {
     try {
         const results = await scrapePixiv();
-        res.json(results);
+        res.send(JSON.stringify(results, null, 2));
     } catch (error) {
         console.error('Error:', error);
         res.status(500).json({ error: 'Server error' });

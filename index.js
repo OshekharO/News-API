@@ -196,6 +196,32 @@ app.get('/api/memes', async (req, res) => {
   }
 });
 
+app.get('/api/youtube', async (req, res) => {
+  const { url } = req.query;
+  if (!url) {
+    return res.status(400).send({ error: 'URL is required' });
+  }
+
+  const encodedUrl = encodeURIComponent(url);
+
+  try {
+    const response = await axios.post('https://givefastlink.com/wp-json/aio-dl/video-data/', {
+      url: encodedUrl,
+      token: 'cac09d4f19e67c603f127379cac7f51358a349952c05d414612ee9a7fe994bf7',
+    });
+
+    let data = response.data;
+    data = JSON.stringify(data, null, 2); // Prettify JSON
+    data = data.replace(/\\\/\\\/g, '//'); // Replace \/\/ with //
+
+    res.setHeader('Content-Type', 'application/json');
+    res.send(data);
+  } catch (error) {
+    console.error('Error:', error);
+    res.status(500).send('Server error');
+  }
+});
+
 app.get('/api/peakpx/:query/:page?', async (req, res) => {
     const { query, page = 1 } = req.params;
 

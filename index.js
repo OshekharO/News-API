@@ -133,6 +133,9 @@ body {
 <h3>GET /api/memes</h3>
 <p>Fetches memes from API.</p>
 
+<h3>GET /api/pixiv</h3>
+<p>Fetches image from PIXIV.</p>
+
 <h3>GET /api/person/:num?</h3>
 <p>Fetches random details from API.</p>
 
@@ -213,7 +216,9 @@ app.get('/api/peakpx/:query/:page?', async (req, res) => {
 app.get('/api/pixiv', async (req, res) => {
     try {
         const results = await scrapePixiv();
-        res.send(JSON.stringify(results, null, 2));
+        let data = JSON.stringify(results, null, 2);
+        res.setHeader('Content-Type', 'application/json');
+        res.send(data);
     } catch (error) {
         console.error('Error:', error);
         res.status(500).json({ error: 'Server error' });

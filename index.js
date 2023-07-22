@@ -217,7 +217,9 @@ app.get('/api/pixiv/:query/:page?', async (req, res) => {
     const { query, page } = req.params;
     try {
         const artworks = await scrapePixiv(query, page);
-        res.json(artworks);
+        let data = JSON.stringify(artworks, null, 2);
+        res.setHeader('Content-Type', 'application/json');
+        res.send(data);
     } catch (error) {
         console.error(error);
         res.status(500).json({ error: 'An error occurred while fetching Pixiv artworks.' });

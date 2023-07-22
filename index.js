@@ -169,6 +169,20 @@ function createScrapeRoute(scraperFunction) {
   };
 }
 
+app.get('/api/ringtone/:query', async (req, res) => {
+  const { query } = req.params;
+
+  try {
+    const ringtones = await getRingtones(query);
+    let data = JSON.stringify(ringtones, null, 2);
+    res.setHeader('Content-Type', 'application/json');
+    res.send(data);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: "Internal server error" });
+  }
+});
+
 app.get('/api/person/:num?', async (req, res) => {
   try {
     const num = req.params.num || 1;

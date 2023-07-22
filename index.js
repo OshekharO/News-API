@@ -131,6 +131,9 @@ body {
 <h3>GET /api/genius/:query</h3>
 <p>Fetches lyrics from Genius.</p>
 
+<h3>GET /api/ringtone/:query</h3>
+<p>Fetches ringtones from MusikRingtone.</p>
+
 <h3>GET /api/memes</h3>
 <p>Fetches memes from API.</p>
 

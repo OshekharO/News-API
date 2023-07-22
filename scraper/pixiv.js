@@ -1,30 +1,24 @@
 const axios = require('axios');
 const cheerio = require('cheerio');
 
-async function scrapePixiv() {
-    const { data } = await axios.get('https://pixivfe.exozy.me/discovery?mode=all');
+async function scrapePixiv(query, page = 1) {
+    const url = `https://pixivfe.exozy.me/tags/${encodeURIComponent(query)}?order=date_d&page=${page}&mode=safe`;
+    const { data } = await axios.get(url);
     const $ = cheerio.load(data);
-    let results = [];
-    
-    $('.artwork-thumbnail-small').each((i, el) => {
-        const imgSrc = $(el).find('img.artwork-master-image').attr('src');
-        const title = $(el).find('a.artwork-thumbnail-title h3').text();
-        const artworkUrl = $(el).find('a.artwork-thumbnail-title').attr('href');
-        const artistName = $(el).find('.artwork-thumbnail-artist').text().trim();
-        const artistAvatar = $(el).find('.artwork-thumbnail-artist-avatar').attr('src');
+    const artworks = [];
 
-        let imgSrcFormatted = imgSrc.replace("/c/250x250_80_a2/custom-thumb/img", "/img-master/img").replace("_custom1200.jpg", "_master1200.jpg");
-        
-        results.push({
-            title,
-            artworkUrl: `https://pixivfe.exozy.me${artworkUrl}`,
-            artistName,
-            artistAvatar,
-            imgSrc: imgSrcFormatted,
-        });
+    $('.artwork-mobile').each((i, el) => {
+        const $el = $(el);
+        const artwork = {
+            title: $el.find('.artwork-thumbnail-title').text().trim(),
+            artist: $el.find('.artwork-thumbnail-artist').text().trim(),
+            image: $el.find('.artwork-master-image').attr('src').replace('/c/250x250_80_a2/custom-thumb/', '/img-master/').replace('_custom1200', '_master1200'),
+            link: 'https://pixivfe.exozy.me' + $el.find('.artwork-thumbnail-title').attr('href'),
+        };
+        artworks.push(artwork);
     });
-    
-    return results;
+
+    return artworks;
 }
 
 module.exports = scrapePixiv;

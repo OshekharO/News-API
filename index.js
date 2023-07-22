@@ -133,7 +133,7 @@ body {
 <h3>GET /api/memes</h3>
 <p>Fetches memes from API.</p>
 
-<h3>GET /api/pixiv</h3>
+<h3>GET /api/pixiv/:query/:page?</h3>
 <p>Fetches image from PIXIV.</p>
 
 <h3>GET /api/person/:num?</h3>
@@ -213,15 +213,14 @@ app.get('/api/peakpx/:query/:page?', async (req, res) => {
         });
 });
 
-app.get('/api/pixiv', async (req, res) => {
+app.get('/api/pixiv/:query/:page?', async (req, res) => {
+    const { query, page } = req.params;
     try {
-        const results = await scrapePixiv();
-        let data = JSON.stringify(results, null, 2);
-        res.setHeader('Content-Type', 'application/json');
-        res.send(data);
+        const artworks = await scrapePixiv(query, page);
+        res.json(artworks);
     } catch (error) {
-        console.error('Error:', error);
-        res.status(500).json({ error: 'Server error' });
+        console.error(error);
+        res.status(500).json({ error: 'An error occurred while fetching Pixiv artworks.' });
     }
 });
 

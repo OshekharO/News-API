@@ -12,7 +12,7 @@ async function scrapePixiv(query, page = 1) {
         const artwork = {
             title: $el.find('.artwork-thumbnail-title').text().trim(),
             artist: $el.find('.artwork-thumbnail-artist').text().trim(),
-            image: $el.find('.artwork-master-image').attr('src').replace('/c/250x250_80_a2/custom-thumb/', '/img-master/').replace('_custom1200', '_master1200'),
+            image: $el.find('.artwork-master-image').attr('src').replace('_square1200', '_master1200').replace('/c/250x250_80_a2/', '/'),
             link: 'https://pixivfe.exozy.me' + $el.find('.artwork-thumbnail-title').attr('href'),
         };
         artworks.push(artwork);

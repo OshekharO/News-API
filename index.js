@@ -148,6 +148,9 @@ body {
 <h3>GET /api/giphy/:query/:page?</h3>
 <p>Fetches gifs from Giphy.</p>
 
+<h3>GET /api/radio/:page?</h3>
+<p>Fetches radio from API.</p>
+
 <h3>GET /api/ifsc/:ifsc</h3>
 <p>Fetches bank details from IFSC CODE.</p>
 

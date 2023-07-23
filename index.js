@@ -10,6 +10,7 @@ const { yts } = require('./scraper/yts');
 const peakpx = require('./scraper/peakpx');
 const scrapePixiv = require('./scraper/pixiv');
 const getRingtones = require('./scraper/ringtone');
+const getGifs = require('./scraper/giphy');
 // API keys for newsapi.org
 const API_KEYS_NEWSAPI = ['cab817200f92426bacb4edd2373e82ef', '429904aa01f54a39a278a406acf50070', '28679d41d4454bffaf6a4f40d4b024cc', 'd9903836bbca401a856602f403802521', 'badecbdafe6a4be6a94086f2adfa9c06', '5fbf109857964643b73a2bc2540b36b6'];
 let currentKeyIndexNewsApi = 0;
@@ -172,6 +173,19 @@ function createScrapeRoute(scraperFunction) {
     }
   };
 }
+
+app.get('/api/giphy/:query/:page?', async (req, res) => {
+  const { query, page } = req.params;
+
+  try {
+    const gifs = await getGifs(query, page);
+    let data = JSON.stringify(gifs, null, 2);
+    res.setHeader('Content-Type', 'application/json');
+    res.send(data);
+  } catch (error) {
+    res.status(500).json({ error: error.toString() });
+  }
+});
 
 app.get('/api/ringtone/:query', async (req, res) => {
   const { query } = req.params;

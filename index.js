@@ -179,7 +179,7 @@ function createScrapeRoute(scraperFunction) {
 }
 
 app.get('/api/radio/:page?', async (req, res) => {
-  const page = parseInt(req.params.page) || 1;
+  const page = req.params.page || 1;
   try {
     const stations = await getStations(page);
     let data = JSON.stringify(stations, null, 2);

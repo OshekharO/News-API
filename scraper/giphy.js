@@ -13,8 +13,8 @@ async function getGifs(searchQuery, page = 1) {
     const gifs = response.data.data.map(gif => ({
       title: gif.title,
       images: {
-        gif_url: gif.images.original.url.replace('media4.giphy.com', 'i.giphy.com'),
-        mp4: gif.images.original.mp4.replace('media4.giphy.com', 'i.giphy.com'),
+        gif_url: gif.images.original.url.replace(/media[0-4].giphy.com/g, 'i.giphy.com'),
+        mp4: gif.images.original.mp4.replace(/media[0-4].giphy.com/g, 'i.giphy.com'),
   }
     }));
     return gifs;

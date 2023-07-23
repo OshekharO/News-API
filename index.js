@@ -151,9 +151,6 @@ body {
 <h3>GET /api/radio/:page?</h3>
 <p>Fetches radio from API.</p>
 
-<h3>GET /api/dict/:word</h3>
-<p>Fetches word definations from API.</p>
-
 <h3>GET /api/ifsc/:ifsc</h3>
 <p>Fetches bank details from IFSC CODE.</p>
 
@@ -189,19 +186,6 @@ app.get('/api/radio/:page?', async (req, res) => {
   try {
     const stations = await getStations(page);
     let data = JSON.stringify(stations, null, 2);
-    res.setHeader('Content-Type', 'application/json');
-    res.send(data);
-  } catch (error) {
-    console.error('Error:', error);
-    res.status(500).send('Server error');
-  }
-});
-
-app.get('/api/dict/:word', async (req, res) => {
-  const { word } = req.params;
-  try {
-    const response = await axios.get(`https://api.dictionaryapi.dev/api/v2/entries/en/${word}`);
-    let data = JSON.stringify(response, null, 2);
     res.setHeader('Content-Type', 'application/json');
     res.send(data);
   } catch (error) {

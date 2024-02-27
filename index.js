@@ -268,7 +268,7 @@ app.get('/api/peakpx/:query/:page?', async (req, res) => {
 
 app.get('/api/echallan/:challanNumber', async (req, res) => {
     try {
-        const { challengNumber } = req.params;
+        const { challanNumber } = req.params;
         const extractedData = await traffic(challanNumber);
         res.json(extractedData);
     } catch (err) {

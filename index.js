@@ -8,6 +8,7 @@ const { torrent1337x } = require('./scraper/1337x');
 const { nyaaSI } = require('./scraper/nyaaSI');
 const { yts } = require('./scraper/yts');
 const peakpx = require('./scraper/peakpx');
+const peakpx = require('./scraper/echallan');
 const scrapePixiv = require('./scraper/pixiv');
 const getRingtones = require('./scraper/ringtone');
 const getGifs = require('./scraper/giphy');
@@ -263,6 +264,17 @@ app.get('/api/peakpx/:query/:page?', async (req, res) => {
             console.error('Error:', error);
             res.status(500).json({ message: 'An error occurred while fetching peakpx images.' });
         });
+});
+
+app.post('/api/echallan/:challanNumber', async (req, res) => {
+    try {
+        const { challengNumber } = req.params;
+        const extractedData = await traffic(challanNumber);
+        res.json(extractedData);
+    } catch (err) {
+        console.error('Error:', err);
+        res.status(500).json({ message: 'An error occurred while fetching eChallan data.' });
+    }
 });
 
 app.get('/api/pixiv/:query/:page?', async (req, res) => {

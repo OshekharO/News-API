@@ -266,7 +266,7 @@ app.get('/api/peakpx/:query/:page?', async (req, res) => {
         });
 });
 
-app.post('/api/echallan/:challanNumber', async (req, res) => {
+app.get('/api/echallan/:challanNumber', async (req, res) => {
     try {
         const { challengNumber } = req.params;
         const extractedData = await traffic(challanNumber);

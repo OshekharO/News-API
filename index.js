@@ -8,15 +8,10 @@ const { torrent1337x } = require('./scraper/1337x');
 const { nyaaSI } = require('./scraper/nyaaSI');
 const { yts } = require('./scraper/yts');
 const peakpx = require('./scraper/peakpx');
-const echallan = require('./scraper/echallan');
 const scrapePixiv = require('./scraper/pixiv');
 const getRingtones = require('./scraper/ringtone');
 const getGifs = require('./scraper/giphy');
 const getStations = require('./scraper/radio');
-// API keys for newsapi.org
-const API_KEYS_NEWSAPI = ['cab817200f92426bacb4edd2373e82ef', '429904aa01f54a39a278a406acf50070', '28679d41d4454bffaf6a4f40d4b024cc', 'd9903836bbca401a856602f403802521', 'badecbdafe6a4be6a94086f2adfa9c06', '5fbf109857964643b73a2bc2540b36b6'];
-let currentKeyIndexNewsApi = 0;
-let requestCountNewsApi = 0;
 
 const app = express();
 const port = 3000;
@@ -92,9 +87,6 @@ body {
 
 <h3>GET /api/news/ann</h3>
 <p>Fetches news from AnimeNewsNetwork.</p>
-
-<h3>GET /api/newsapi/:query</h3>
-<p>Fetches data from NewsAPI.</p>
 
 <h3>GET /api/news/inshorts</h3>
 <p>Fetches news from Inshorts. Use ?query= to search for news.</p>
@@ -266,17 +258,6 @@ app.get('/api/peakpx/:query/:page?', async (req, res) => {
         });
 });
 
-app.get('/api/echallan/:challanNumber', async (req, res) => {
-    try {
-        const { challanNumber } = req.params;
-        const extractedData = await echallan.traffic(challanNumber);
-        res.json(extractedData);
-    } catch (err) {
-        console.error('Error:', err);
-        res.status(500).json({ message: 'An error occurred while fetching eChallan data.' });
-    }
-});
-
 app.get('/api/pixiv/:query/:page?', async (req, res) => {
     const { query, page } = req.params;
     try {
@@ -347,38 +328,6 @@ app.get('/api/genius/:query', async (req, res) => {
   }
 });
 
-app.get('/api/newsapi/:query', async (req, res) => {
-  const { query } = req.params;
-
-  // Update the request count
-  requestCountNewsApi++;
-
-  // If we've made 100 requests with the current key, move on to the next one
-  if (requestCountNewsApi >= 100) {
-    currentKeyIndexNewsApi = (currentKeyIndexNewsApi + 1) % API_KEYS_NEWSAPI.length;
-    requestCountNewsApi = 0;  // Reset the request count
-  }
-
-  try {
-    const currentKey = API_KEYS_NEWSAPI[currentKeyIndexNewsApi];
-    console.log(`Using key: ${currentKey}`);  // Log the current key
-
-    const response = await fetch(`https://newsapi.org/v2/everything?q=${query}&apiKey=${currentKey}`);
-    
-    console.log(`Response status: ${response.status}`);  // Log the response status
-
-    if (!response.ok) {
-      throw new Error(`HTTP error! status: ${response.status}`);
-    }
-    
-    const data = await response.json();
-    res.json(data);
-  } catch (err) {
-    console.error(err);
-    res.status(500).json({ message: 'An error occurred while fetching data from NewsAPI.' });
-  }
-});
-
 const fetchNews = (category, country, res) => {
   fetch(`https://saurav.tech/NewsAPI/top-headlines/category/${category}/${country}.json`)
     .then(response => response.json())
@@ -399,10 +348,10 @@ app.get('/api/news/:source', async (req, res) => {
   const { query } = req.query; 
 
   const sourceToUrlMap = {
-    ann: 'https://api.consumet.org/news/ann/recent-feeds',
+    ann: 'https://api.fl-anime.com/news/ann/recent-feeds',
     inshorts: query 
-        ? `https://inshorts.me/news/search?query=${query}&offset=0&limit=20`
-        : 'https://inshorts.me/news/all?offset=0&limit=20'
+        ? `https://inshorts.vercel.app/news/search?query=${query}&offset=0&limit=10`
+        : 'https://inshorts.vercel.app/news/all?offset=0&limit=10'
   };
 
   if (!sourceToUrlMap.hasOwnProperty(source)) {
@@ -423,4 +372,4 @@ app.listen(port, () => {
   console.log(`Server running at http://localhost:${port}/`);
 });
 
-module.exports = app; // Export your app
+module.exports = app;

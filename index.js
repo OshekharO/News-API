@@ -79,7 +79,6 @@ body {
 <h3>Base URL</h3>
 <p>https://news-api-six-navy.vercel.app</p>
 <p>https://news-api-czsp.onrender.com</p>
-<p>https://news-api.cyclic.app</p>
 <div class="separator"></div>
 <h6>API Endpoints</h6>
 

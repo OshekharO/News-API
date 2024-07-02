@@ -10,7 +10,7 @@ exports.search = function(query, page = 1) {
                 $('#list_ul > li.grid').each((index, element) => {
                     const image = {};
                     image.title = $(element).find('figure > .overflow.title').text().trim();
-                    image.imageUrl = $(element).find('link[itemprop="contentUrl"]').attr('href');
+                    image.imageUrl = $(element).find('figure > link[itemprop="contentUrl"]').attr('href');
                     images.push(image);
                 });
                 resolve(images);

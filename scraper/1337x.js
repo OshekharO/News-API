@@ -19,10 +19,13 @@ async function torrent1337x(query = '', page = '1') {
     const $ = cheerio.load(html.data)
 
     const links = $('td.name').map((_, element) => {
-        var link = 'https://www.1337xx.to' + $(element).find('a').eq(1).attr('href');
-        return link;
+        const href = $(element).find('a').eq(1).attr('href');
+        if (!href) {
+            return null;
+        }
+        return 'https://www.1337xx.to' + href;
 
-    }).get();
+    }).get().filter((link) => link !== null);
 
 
     await Promise.all(links.map(async (element) => {
@@ -52,7 +55,7 @@ async function torrent1337x(query = '', page = '1') {
         }
 
         $('ul.list li span').each((i, element) => {
-            $list = $(element);
+            const $list = $(element);
             data[labels[i]] = $list.text();
         })
         data.Url = element

@@ -92,6 +92,8 @@ app.get('/', (req, res) => {
       cursor: pointer;
       transition: border-color 0.15s, color 0.15s;
       user-select: all;
+      display: inline-block;
+      line-height: normal;
     }
     .base-url-chip:hover { border-color: var(--accent); color: var(--text); }
 
@@ -232,8 +234,8 @@ app.get('/', (req, res) => {
   <h1>&#9889; News API</h1>
   <p>A unified REST API for news, torrents, lyrics, GIFs, and more.</p>
   <div class="base-urls">
-    <span class="base-url-chip" onclick="copyText('https://news-api-mocha.vercel.app')">news-api-mocha.vercel.app</span>
-    <span class="base-url-chip" onclick="copyText('https://news-api-czsp.onrender.com')">news-api-czsp.onrender.com</span>
+    <button class="base-url-chip" onclick="copyText('https://news-api-six-navy.vercel.app')">news-api-six-navy.vercel.app</button>
+    <button class="base-url-chip" onclick="copyText('https://news-api-czsp.onrender.com')">news-api-czsp.onrender.com</button>
   </div>
 </header>
 
@@ -259,7 +261,7 @@ app.get('/', (req, res) => {
         <div class="card-top">
           <span class="method-badge">GET</span>
           <span class="endpoint" onclick="copyText('/api/news/inshorts?query=...')">/api/news/inshorts</span>
-          <button class="copy-btn" onclick="copyText('/api/news/inshorts')" title="Copy">&#128203;</button>
+          <button class="copy-btn" onclick="copyText('/api/news/inshorts?query=...')" title="Copy">&#128203;</button>
         </div>
         <p class="card-desc">News from Inshorts. Add <code>?query=</code> to search.</p>
       </div>
@@ -411,7 +413,7 @@ app.get('/', (req, res) => {
 </div>
 
 <footer>
-  <p>All endpoints return JSON &mdash; <a href="https://github.com/OshekharO/News-API" target="_blank">GitHub</a></p>
+  <p>All endpoints return JSON &mdash; <a href="https://github.com/OshekharO/News-API" target="_blank" rel="noopener noreferrer">GitHub</a></p>
 </footer>
 
 <div id="toast">Copied!</div>

@@ -1,7 +1,7 @@
 const cheerio = require('cheerio');
 const axios = require('axios');
 
-
+const UA = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36';
 
 async function yts(query, page = '1') {
 
@@ -14,11 +14,9 @@ async function yts(query, page = '1') {
     }
     let html;
     try {
-        html = await axios.get(url, headers = {
-            "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.106 Safari/537.36"
-        });
+        html = await axios.get(url, { headers: { "User-Agent": UA } });
     } catch {
-        return null;
+        return [];
     }
 
     const $ = cheerio.load(html.data);
@@ -42,7 +40,7 @@ async function yts(query, page = '1') {
         };
         let html;
         try {
-            html = await axios.get(url);
+            html = await axios.get(url, { headers: { "User-Agent": UA } });
         } catch {
             return;
         }

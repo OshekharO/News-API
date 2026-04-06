@@ -21,21 +21,55 @@ const httpHeaders = {
 const axiosOpts = {
     headers: httpHeaders,
     timeout: 15000,
+    validateStatus: () => true,
 };
+
+// Mirrors tried in order; first one that returns real results is used for detail pages too
+const MIRRORS = [
+    'https://www.1337xx.to',
+    'https://1337x.to',
+    'https://1337x.st',
+    'https://www.1337x.gd',
+    'https://x1337x.se',
+    'https://x1337x.eu',
+];
+
+function isBlocked($) {
+    const title = $('title').text().toLowerCase();
+    return (
+        title.includes('just a moment') ||
+        title.includes('attention required') ||
+        $('form#challenge-form').length > 0 ||
+        $('div#cf-wrapper').length > 0
+    );
+}
 
 async function torrent1337x(query = '', page = '1') {
 
     const allTorrent = [];
-    const url = 'https://www.1337xx.to/search/' + query + '/' + page + '/';
 
-    const html = await axios.get(url, axiosOpts);
-    const $ = cheerio.load(html.data);
+    let $;
+    let baseUrl;
 
-    if ($('title').text().toLowerCase().includes('just a moment')) {
-        throw new Error('Cloudflare bot-protection challenge (title match) — scraping blocked');
+    for (const mirror of MIRRORS) {
+        const url = `${mirror}/search/${query}/${page}/`;
+        try {
+            const res = await axios.get(url, axiosOpts);
+            const doc = cheerio.load(res.data);
+            const rows = doc('td.name');
+            if (!isBlocked(doc) && rows.length > 0) {
+                $ = doc;
+                baseUrl = mirror;
+                break;
+            }
+        } catch (err) {
+            console.error(`1337x mirror ${mirror} failed:`, err.message);
+            // try next mirror
+        }
     }
-    if ($('form#challenge-form').length > 0) {
-        throw new Error('Cloudflare bot-protection challenge (challenge form) — scraping blocked');
+
+    if (!$ || !baseUrl) {
+        throw new Error('All 1337x mirrors are blocked or unreachable');
     }
 
     const links = $('td.name').map((_, element) => {
@@ -43,7 +77,7 @@ async function torrent1337x(query = '', page = '1') {
         if (!href) {
             return null;
         }
-        return 'https://www.1337xx.to' + href;
+        return baseUrl + href;
 
     }).get().filter((link) => link !== null);
 

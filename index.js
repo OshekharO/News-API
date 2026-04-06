@@ -182,7 +182,6 @@ app.get('/', (req, res) => {
       transition: color 0.15s, background 0.15s;
     }
     .copy-btn:hover { color: var(--text); background: var(--surface2); }
-    .copy-btn.copied { color: var(--green); }
 
     .card-desc {
       font-size: 0.82rem;

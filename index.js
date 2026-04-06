@@ -234,8 +234,8 @@ app.get('/', (req, res) => {
   <h1>&#9889; News API</h1>
   <p>A unified REST API for news, torrents, lyrics, GIFs, and more.</p>
   <div class="base-urls">
-    <button class="base-url-chip" onclick="copyText('https://news-api-six-navy.vercel.app')">news-api-six-navy.vercel.app</button>
-    <button class="base-url-chip" onclick="copyText('https://news-api-czsp.onrender.com')">news-api-czsp.onrender.com</button>
+    <button type="button" class="base-url-chip" onclick="copyText('https://news-api-six-navy.vercel.app')">news-api-six-navy.vercel.app</button>
+    <button type="button" class="base-url-chip" onclick="copyText('https://news-api-czsp.onrender.com')">news-api-czsp.onrender.com</button>
   </div>
 </header>
 

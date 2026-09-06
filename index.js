@@ -482,9 +482,8 @@ app.get('/api/giphy/:query/:page?', async (req, res) => {
 
   try {
     const gifs = await getGifs(query, page);
-    let data = JSON.stringify(gifs, null, 2);
-    res.setHeader('Content-Type', 'application/json');
-    res.send(data);
+    // Optimized: Use res.json() to avoid manual pretty-printing overhead and reduce response size
+    res.json(gifs);
   } catch (error) {
     res.status(500).json({ error: error.toString() });
   }
@@ -495,9 +494,8 @@ app.get('/api/ringtone/:query', async (req, res) => {
 
   try {
     const ringtones = await getRingtones(query);
-    let data = JSON.stringify(ringtones, null, 2);
-    res.setHeader('Content-Type', 'application/json');
-    res.send(data);
+    // Optimized: Use res.json() to avoid manual pretty-printing overhead and reduce response size
+    res.json(ringtones);
   } catch (err) {
     console.error(err);
     res.status(500).json({ message: "Internal server error" });
@@ -510,10 +508,8 @@ app.get('/api/person/:num?', async (req, res) => {
     const url = `https://peoplegeneratorapi.live/api/person/${num}`;
 
     const response = await axios.get(url);
-    const prettyJson = JSON.stringify(response.data, null, 2);
-
-    res.setHeader('Content-Type', 'application/json');
-    res.send(prettyJson);
+    // Optimized: Use res.json() to avoid manual pretty-printing overhead and reduce response size
+    res.json(response.data);
   } catch (error) {
     console.error('Error:', error);
     res.status(500).send('Server error');
@@ -523,12 +519,8 @@ app.get('/api/person/:num?', async (req, res) => {
 app.get('/api/memes', async (req, res) => {
   try {
     const response = await axios.get('https://api.imgflip.com/get_memes');
-    let data = response.data;
-    data = JSON.stringify(data, null, 2);
-    data = data.replace(/\\\//g, '/');
-
-    res.setHeader('Content-Type', 'application/json');
-    res.send(data);
+    // Optimized: Use res.json() to avoid manual pretty-printing overhead and reduce response size
+    res.json(response.data);
   } catch (error) {
     console.error('Error:', error);
     res.status(500).send('Server error');
@@ -540,9 +532,8 @@ app.get('/api/slok/:ch?/:sl?', async (req, res) => {
     const sloka = req.params.sl || '1';
     try {
         const response = await axios.get(`https://bhagavadgitaapi.in/slok/${chapter}/${sloka}`);
-        const prettyJson = JSON.stringify(response.data, null, 2);
-        res.setHeader('Content-Type', 'application/json');
-        res.send(prettyJson);
+        // Optimized: Use res.json() to avoid manual pretty-printing overhead and reduce response size
+        res.json(response.data);
     } catch (error) {
         console.error('Error:', error);
         res.status(500).send('Server error');
@@ -552,9 +543,8 @@ app.get('/api/slok/:ch?/:sl?', async (req, res) => {
 app.get('/api/jokes/:query', async (req, res) => {
   try {
     const response = await axios.get(`https://api.chucknorris.io/jokes/search?query=${req.params.query}`);
-    const prettyJson = JSON.stringify(response.data, null, 2);
-    res.setHeader('Content-Type', 'application/json');
-    res.send(prettyJson);
+    // Optimized: Use res.json() to avoid manual pretty-printing overhead and reduce response size
+    res.json(response.data);
   } catch (error) {
     console.error('Error:', error);
     res.status(500).send('Server error');
@@ -567,10 +557,8 @@ app.get('/api/ifsc/:ifsc', async (req, res) => {
     const url = `https://bank-apis.justinclicks.com/API/V1/IFSC/${ifsc}`;
 
     const response = await axios.get(url);
-    const prettyJson = JSON.stringify(response.data, null, 2);
-
-    res.setHeader('Content-Type', 'application/json');
-    res.send(prettyJson);
+    // Optimized: Use res.json() to avoid manual pretty-printing overhead and reduce response size
+    res.json(response.data);
   } catch (error) {
     console.error('Error:', error);
     res.status(500).send('Server error');

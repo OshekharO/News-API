@@ -57,20 +57,16 @@ async function yts(query, page = '1') {
         data['Url'] = url;
         data['Poster'] = $('div #movie-poster').eq(0).find('img').attr('src');
 
-        $('.modal-download > div:nth-child(1) div.modal-content').each((i, el) => {
-            $('div.modal-torrent').each((_, ele) => {
-                let files = {};
-                files.Quality = $(ele).find(':nth-child(1) >span').text();;
-                files.Type = $(ele).find(':nth-child(2)').text();
-                files.Size = $(ele).find(':nth-child(5)').text();
-                files.Torrent = $(ele).find(':nth-child(6)').attr('href');
-                files.Magnet = $(ele).find(':nth-child(7)').attr('href');
+        $('div.modal-torrent').each((_, ele) => {
+            let files = {};
+            files.Quality = $(ele).find(':nth-child(1) >span').text();
+            files.Type = $(ele).find(':nth-child(2)').text();
+            files.Size = $(ele).find(':nth-child(5)').text();
+            files.Torrent = $(ele).find(':nth-child(6)').attr('href');
+            files.Magnet = $(ele).find(':nth-child(7)').attr('href');
 
-                data.Files.push(files);
-            })
-
-
-        })
+            data.Files.push(files);
+        });
         all.push(data);
     }))
 

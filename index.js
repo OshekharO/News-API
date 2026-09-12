@@ -1,3 +1,4 @@
+const cheerio = require('cheerio');
 const express = require('express');
 const fetch = require('node-fetch');
 const cors = require('cors');
@@ -505,7 +506,7 @@ app.get('/api/ringtone/:query', async (req, res) => {
 app.get('/api/person/:num?', async (req, res) => {
   try {
     const num = req.params.num || 1;
-    const url = `https://peoplegeneratorapi.live/api/person/${num}`;
+    const url = `https://peoplegeneratorapi.live/api/person/${encodeURIComponent(num)}`;
 
     const response = await axios.get(url);
     // Optimized: Use res.json() to avoid manual pretty-printing overhead and reduce response size
@@ -531,7 +532,7 @@ app.get('/api/slok/:ch?/:sl?', async (req, res) => {
     const chapter = req.params.ch || '1';
     const sloka = req.params.sl || '1';
     try {
-        const response = await axios.get(`https://bhagavadgitaapi.in/slok/${chapter}/${sloka}`);
+        const response = await axios.get(`https://bhagavadgitaapi.in/slok/${encodeURIComponent(chapter)}/${encodeURIComponent(sloka)}`);
         // Optimized: Use res.json() to avoid manual pretty-printing overhead and reduce response size
         res.json(response.data);
     } catch (error) {
@@ -542,7 +543,7 @@ app.get('/api/slok/:ch?/:sl?', async (req, res) => {
 
 app.get('/api/jokes/:query', async (req, res) => {
   try {
-    const response = await axios.get(`https://api.chucknorris.io/jokes/search?query=${req.params.query}`);
+    const response = await axios.get(`https://api.chucknorris.io/jokes/search?query=${encodeURIComponent(req.params.query)}`);
     // Optimized: Use res.json() to avoid manual pretty-printing overhead and reduce response size
     res.json(response.data);
   } catch (error) {
@@ -554,7 +555,7 @@ app.get('/api/jokes/:query', async (req, res) => {
 app.get('/api/ifsc/:ifsc', async (req, res) => {
   try {
     const ifsc = req.params.ifsc;
-    const url = `https://bank-apis.justinclicks.com/API/V1/IFSC/${ifsc}`;
+    const url = `https://bank-apis.justinclicks.com/API/V1/IFSC/${encodeURIComponent(ifsc)}`;
 
     const response = await axios.get(url);
     // Optimized: Use res.json() to avoid manual pretty-printing overhead and reduce response size
@@ -568,7 +569,7 @@ app.get('/api/ifsc/:ifsc', async (req, res) => {
 app.get('/api/genius/:query', async (req, res) => {
   const { query } = req.params;
   try {
-    const response = await fetch(`https://genius.com/api/search/multi?per_page=1&q=${query}`);
+    const response = await fetch(`https://genius.com/api/search/multi?per_page=1&q=${encodeURIComponent(query)}`);
     if (!response.ok) {
       throw new Error(`HTTP error! status: ${response.status}`);
     }
@@ -602,7 +603,7 @@ app.get('/api/news/:source', async (req, res) => {
   const sourceToUrlMap = {
     ann: 'https://api.fl-anime.com/news/ann/recent-feeds',
     inshorts: query 
-        ? `https://inshorts.vercel.app/news/search?query=${query}&offset=0&limit=10`
+        ? `https://inshorts.vercel.app/news/search?query=${encodeURIComponent(query)}&offset=0&limit=10`
         : 'https://inshorts.vercel.app/news/all?offset=0&limit=10'
   };
 
@@ -612,16 +613,44 @@ app.get('/api/news/:source', async (req, res) => {
 
   try {
     const response = await fetch(sourceToUrlMap[source]);
+    if (!response.ok) {
+      throw new Error(`HTTP error ${response.status}`);
+    }
     const data = await response.json();
-    res.json(data);
+    return res.json(data);
   } catch (error) {
-    console.error('Error:', error);
+    console.error(`Error fetching source ${source}:`, error.message);
+    if (source === 'ann') {
+      try {
+        console.log('Falling back to MyAnimeList RSS feed for anime news...');
+        const rssRes = await axios.get('https://myanimelist.net/rss/news.xml', {
+          headers: { 'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64)' },
+          timeout: 10000
+        });
+        const $ = cheerio.load(rssRes.data, { xmlMode: true });
+        const articles = [];
+        $('item').each((_, el) => {
+          articles.push({
+            title: $(el).find('title').text(),
+            url: $(el).find('link').text(),
+            pubDate: $(el).find('pubDate').text(),
+            preview: $(el).find('description').text()
+          });
+        });
+        return res.json({ source: 'MyAnimeList RSS (Fallback)', count: articles.length, articles });
+      } catch (fallbackError) {
+        console.error('Fallback failed:', fallbackError.message);
+        return res.status(500).json({ error: 'Failed to fetch anime news feed.' });
+      }
+    }
     res.status(500).send('Server error');
   }
 });
 
-app.listen(port, () => {
-  console.log(`Server running at http://localhost:${port}/`);
-});
+if (require.main === module) {
+  app.listen(port, () => {
+    console.log(`Server running at http://localhost:${port}/`);
+  });
+}
 
 module.exports = app;

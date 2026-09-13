@@ -2,25 +2,37 @@ const axios = require('axios');
 const cheerio = require('cheerio');
 
 async function getRingtones(query) {
-  const { data } = await axios.get(`https://musikringtone.com/search?t=${query}`);
-  const $ = cheerio.load(data);
-  const ringtones = $(".ring-card");
-  const results = [];
-
-  ringtones.each((index, element) => {
-    const $element = $(element);
-    const audioSrc = $element.find("audio.audio").attr("data-src");
-    const title = $element.find(".head-card .ringnamelink").text();
-    const language = $element.find(".cat-card-button").text().replace("Ringtones", "").trim();
-
-    results.push({
-      title: title,
-      audioSrc: audioSrc,
-      language: language,
+  try {
+    const res = await axios.get(`https://cellbeat.com/?s=${encodeURIComponent(query)}`, {
+      headers: {
+        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36'
+      },
+      timeout: 10000
     });
-  });
+    const $ = cheerio.load(res.data);
+    const results = [];
+    const seen = new Set();
 
-  return results;
+    $('a[href*="/ringtone/"]').each((_, el) => {
+      const href = $(el).attr('href');
+      const title = $(el).text().trim();
+      if (title && title !== 'Play It' && !seen.has(href)) {
+        seen.add(href);
+        const slug = href.replace(/\/$/, '').split('/').pop();
+        const audioSrc = `https://cellbeat.com/wp-admin/admin-ajax.php?action=download_ringtone&ringtone_slug=${slug}&ringtone_type=mp3`;
+        results.push({
+          title: title,
+          audioSrc: audioSrc,
+          url: href
+        });
+      }
+    });
+
+    return results;
+  } catch (err) {
+    console.error('Ringtone scraping error:', err.message);
+    return [];
+  }
 }
 
 module.exports = getRingtones;

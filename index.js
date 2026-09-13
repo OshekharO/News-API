@@ -11,6 +11,12 @@ const { yts } = require('./scraper/yts');
 const scrapePixiv = require('./scraper/pixiv');
 const getRingtones = require('./scraper/ringtone');
 const getGifs = require('./scraper/giphy');
+const scrapeYoutube = require('./scraper/youtube');
+const getWallpapers = require('./scraper/wallhaven');
+const { searchAnime, getAnimeEpisodes } = require('./scraper/anime');
+const downloadYoutubeVideo = require('./scraper/ytultra');
+const searchDeezer = require('./scraper/deezer');
+const searchItunes = require('./scraper/itunes');
 
 const app = express();
 const port = 3000;
@@ -408,6 +414,62 @@ app.get('/', (req, res) => {
         </div>
         <p class="card-desc">Jokes from Chuck Norris API by category.</p>
       </div>
+      <div class="card">
+        <div class="card-top">
+          <span class="method-badge">GET</span>
+          <span class="endpoint" onclick="copyText('/api/youtube/search/:query')">/api/youtube/search/:query</span>
+          <button class="copy-btn" onclick="copyText('/api/youtube/search/:query')" title="Copy">&#128203;</button>
+        </div>
+        <p class="card-desc">Search YouTube videos, thumbnails, and links.</p>
+      </div>
+      <div class="card">
+        <div class="card-top">
+          <span class="method-badge">GET</span>
+          <span class="endpoint" onclick="copyText('/api/wallpaper/:query')">/api/wallpaper/:query</span>
+          <button class="copy-btn" onclick="copyText('/api/wallpaper/:query')" title="Copy">&#128203;</button>
+        </div>
+        <p class="card-desc">Search HD wallpapers from Wallhaven.</p>
+      </div>
+      <div class="card">
+        <div class="card-top">
+          <span class="method-badge">GET</span>
+          <span class="endpoint" onclick="copyText('/api/anime/search/:query')">/api/anime/search/:query</span>
+          <button class="copy-btn" onclick="copyText('/api/anime/search/:query')" title="Copy">&#128203;</button>
+        </div>
+        <p class="card-desc">Search anime titles, posters, ratings, and details.</p>
+      </div>
+      <div class="card">
+        <div class="card-top">
+          <span class="method-badge">GET</span>
+          <span class="endpoint" onclick="copyText('/api/anime/episodes/:id')">/api/anime/episodes/:id</span>
+          <button class="copy-btn" onclick="copyText('/api/anime/episodes/:id')" title="Copy">&#128203;</button>
+        </div>
+        <p class="card-desc">List anime episodes, watch links, and download links by Anime ID.</p>
+      </div>
+      <div class="card">
+        <div class="card-top">
+          <span class="method-badge">POST/GET</span>
+          <span class="endpoint" onclick="copyText('/api/youtube/download?url=...')">/api/youtube/download</span>
+          <button class="copy-btn" onclick="copyText('/api/youtube/download?url=...')" title="Copy">&#128203;</button>
+        </div>
+        <p class="card-desc">Extract YouTube video/audio direct download links via YTUltra.</p>
+      </div>
+      <div class="card">
+        <div class="card-top">
+          <span class="method-badge">GET</span>
+          <span class="endpoint" onclick="copyText('/api/music/deezer/:query')">/api/music/deezer/:query</span>
+          <button class="copy-btn" onclick="copyText('/api/music/deezer/:query')" title="Copy">&#128203;</button>
+        </div>
+        <p class="card-desc">Search music, artists, albums, and audio preview streams on Deezer.</p>
+      </div>
+      <div class="card">
+        <div class="card-top">
+          <span class="method-badge">GET</span>
+          <span class="endpoint" onclick="copyText('/api/music/itunes/:query')">/api/music/itunes/:query</span>
+          <button class="copy-btn" onclick="copyText('/api/music/itunes/:query')" title="Copy">&#128203;</button>
+        </div>
+        <p class="card-desc">Search Apple Music / iTunes songs, artwork, and audio previews.</p>
+      </div>
     </div>
   </div>
 
@@ -506,10 +568,9 @@ app.get('/api/ringtone/:query', async (req, res) => {
 app.get('/api/person/:num?', async (req, res) => {
   try {
     const num = req.params.num || 1;
-    const url = `https://peoplegeneratorapi.live/api/person/${encodeURIComponent(num)}`;
+    const url = `https://randomuser.me/api/?results=${encodeURIComponent(num)}`;
 
     const response = await axios.get(url);
-    // Optimized: Use res.json() to avoid manual pretty-printing overhead and reduce response size
     res.json(response.data);
   } catch (error) {
     console.error('Error:', error);
@@ -520,11 +581,16 @@ app.get('/api/person/:num?', async (req, res) => {
 app.get('/api/memes', async (req, res) => {
   try {
     const response = await axios.get('https://api.imgflip.com/get_memes');
-    // Optimized: Use res.json() to avoid manual pretty-printing overhead and reduce response size
     res.json(response.data);
   } catch (error) {
-    console.error('Error:', error);
-    res.status(500).send('Server error');
+    console.error('Imgflip API failed, trying fallback meme-api:', error.message);
+    try {
+      const fallbackResponse = await axios.get('https://meme-api.com/gimme');
+      res.json(fallbackResponse.data);
+    } catch (fallbackError) {
+      console.error('Error:', fallbackError);
+      res.status(500).send('Server error');
+    }
   }
 });
 
@@ -532,8 +598,7 @@ app.get('/api/slok/:ch?/:sl?', async (req, res) => {
     const chapter = req.params.ch || '1';
     const sloka = req.params.sl || '1';
     try {
-        const response = await axios.get(`https://bhagavadgitaapi.in/slok/${encodeURIComponent(chapter)}/${encodeURIComponent(sloka)}`);
-        // Optimized: Use res.json() to avoid manual pretty-printing overhead and reduce response size
+        const response = await axios.get(`https://vedicscriptures.github.io/slok/${encodeURIComponent(chapter)}/${encodeURIComponent(sloka)}`);
         res.json(response.data);
     } catch (error) {
         console.error('Error:', error);
@@ -544,11 +609,16 @@ app.get('/api/slok/:ch?/:sl?', async (req, res) => {
 app.get('/api/jokes/:query', async (req, res) => {
   try {
     const response = await axios.get(`https://api.chucknorris.io/jokes/search?query=${encodeURIComponent(req.params.query)}`);
-    // Optimized: Use res.json() to avoid manual pretty-printing overhead and reduce response size
     res.json(response.data);
   } catch (error) {
-    console.error('Error:', error);
-    res.status(500).send('Server error');
+    console.error('Chuck Norris API failed, trying JokeAPI fallback:', error.message);
+    try {
+      const fallback = await axios.get(`https://v2.jokeapi.dev/joke/Any?contains=${encodeURIComponent(req.params.query)}`);
+      res.json(fallback.data);
+    } catch (fallbackError) {
+      console.error('Error:', fallbackError);
+      res.status(500).send('Server error');
+    }
   }
 });
 
@@ -558,26 +628,110 @@ app.get('/api/ifsc/:ifsc', async (req, res) => {
     const url = `https://bank-apis.justinclicks.com/API/V1/IFSC/${encodeURIComponent(ifsc)}`;
 
     const response = await axios.get(url);
-    // Optimized: Use res.json() to avoid manual pretty-printing overhead and reduce response size
     res.json(response.data);
   } catch (error) {
-    console.error('Error:', error);
-    res.status(500).send('Server error');
+    console.error('Primary IFSC API failed, trying Razorpay fallback:', error.message);
+    try {
+      const fallbackUrl = `https://ifsc.razorpay.com/${encodeURIComponent(req.params.ifsc)}`;
+      const fallbackResponse = await axios.get(fallbackUrl);
+      res.json(fallbackResponse.data);
+    } catch (fallbackError) {
+      console.error('Error:', fallbackError);
+      res.status(500).send('Server error');
+    }
   }
 });
 
 app.get('/api/genius/:query', async (req, res) => {
   const { query } = req.params;
   try {
-    const response = await fetch(`https://genius.com/api/search/multi?per_page=1&q=${encodeURIComponent(query)}`);
-    if (!response.ok) {
-      throw new Error(`HTTP error! status: ${response.status}`);
-    }
-    const data = await response.json();
-    res.json(data);
+    const response = await axios.get(`https://lrclib.net/api/search?q=${encodeURIComponent(query)}`);
+    res.json(response.data);
   } catch (err) {
     console.error(err);
     res.status(500).json({ message: 'An error occurred while fetching data from Genius.' });
+  }
+});
+
+app.get('/api/youtube/search/:query', async (req, res) => {
+  const { query } = req.params;
+  try {
+    const videos = await scrapeYoutube(query);
+    res.json(videos);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: 'An error occurred while searching YouTube.' });
+  }
+});
+
+app.get('/api/wallpaper/:query', async (req, res) => {
+  const { query } = req.params;
+  try {
+    const wallpapers = await getWallpapers(query);
+    res.json(wallpapers);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: 'An error occurred while fetching wallpapers.' });
+  }
+});
+
+app.get('/api/anime/search/:query', async (req, res) => {
+  const { query } = req.params;
+  try {
+    const animeList = await searchAnime(query);
+    res.json(animeList);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: 'An error occurred while searching anime.' });
+  }
+});
+
+app.get('/api/anime/episodes/:id', async (req, res) => {
+  const { id } = req.params;
+  try {
+    const episodeData = await getAnimeEpisodes(id);
+    res.json(episodeData);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: 'An error occurred while fetching anime episodes.' });
+  }
+});
+
+app.use(express.json());
+
+app.all('/api/youtube/download', async (req, res) => {
+  const videoUrl = req.body?.url || req.query?.url;
+  if (!videoUrl) {
+    return res.status(400).json({ error: 'Missing url parameter in body or query query string' });
+  }
+  try {
+    const data = await downloadYoutubeVideo(videoUrl);
+    res.json(data);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: 'An error occurred while resolving YouTube download.' });
+  }
+});
+
+app.get('/api/music/deezer/:query', async (req, res) => {
+  const { query } = req.params;
+  try {
+    const musicList = await searchDeezer(query);
+    res.json(musicList);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: 'An error occurred while searching Deezer.' });
+  }
+});
+
+app.get('/api/music/itunes/:query', async (req, res) => {
+  const { query } = req.params;
+  try {
+    const musicList = await searchItunes(query);
+    res.json(musicList);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: 'An error occurred while searching iTunes.' });
   }
 });
 

@@ -32,13 +32,17 @@ const MIRRORS = [
     'https://www.1337x.gd',
     'https://x1337x.se',
     'https://x1337x.eu',
+    'https://1337x.so',
+    'https://1337x.tw',
 ];
 
-function isBlocked($) {
+function isBlocked($, resStatus) {
+    if (resStatus && resStatus !== 200) return true;
     const title = $('title').text().toLowerCase();
     return (
         title.includes('just a moment') ||
         title.includes('attention required') ||
+        title.includes('access denied') ||
         $('form#challenge-form').length > 0 ||
         $('div#cf-wrapper').length > 0
     );
@@ -57,7 +61,7 @@ async function torrent1337x(query = '', page = '1') {
             const res = await axios.get(url, axiosOpts);
             const doc = cheerio.load(res.data);
             const rows = doc('td.name');
-            if (!isBlocked(doc) && rows.length > 0) {
+            if (!isBlocked(doc, res.status) && rows.length > 0) {
                 $ = doc;
                 baseUrl = mirror;
                 break;
@@ -69,7 +73,7 @@ async function torrent1337x(query = '', page = '1') {
     }
 
     if (!$ || !baseUrl) {
-        throw new Error('All 1337x mirrors are blocked or unreachable');
+        return [];
     }
 
     const links = $('td.name').map((_, element) => {

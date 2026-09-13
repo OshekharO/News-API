@@ -1,6 +1,7 @@
 const axios = require('axios');
 const { nyaaSI } = require('./nyaaSI');
 
+
 async function searchAnime(query) {
   try {
     const res = await axios.get(`https://kitsu.io/api/edge/anime?filter[text]=${encodeURIComponent(query)}&page[limit]=10`, {
@@ -41,6 +42,7 @@ async function getAnimeEpisodes(animeId) {
     let epRes, streamRes, animeRes;
     try {
       epRes = await axios.get(`https://kitsu.io/api/edge/anime/${animeId}/episodes?page[limit]=20`, { headers, timeout: 10000 });
+
     } catch {
       epRes = { data: { data: [] } };
     }
@@ -66,6 +68,7 @@ async function getAnimeEpisodes(animeId) {
       const epTitle = attr.canonicalTitle || attr.titles?.en || attr.titles?.en_jp || `Episode ${attr.number}`;
       const searchKey = `${animeTitle} Episode ${attr.number}`;
 
+
       return {
         number: attr.number,
         title: epTitle,
@@ -73,6 +76,7 @@ async function getAnimeEpisodes(animeId) {
         airdate: attr.airdate,
         length: attr.length ? `${attr.length} min` : null,
         thumbnail: attr.thumbnail?.original || attr.thumbnail?.large || null,
+
         watchLinks: streamingLinks,
         torrentDownloadSearch: `https://nyaa.si/?q=${encodeURIComponent(searchKey)}`
       };
@@ -92,6 +96,7 @@ async function getAnimeEpisodes(animeId) {
         seeders: t.Seeders,
         leechers: t.Leechers
       })),
+
       episodes
     };
   } catch (err) {

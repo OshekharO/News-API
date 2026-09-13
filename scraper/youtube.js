@@ -18,6 +18,7 @@ async function scrapeYoutube(query) {
       const v = item.videoRenderer;
       if (v && v.videoId) {
         const videoUrl = `https://www.youtube.com/watch?v=${v.videoId}`;
+
         videos.push({
           id: v.videoId,
           title: v.title?.runs?.[0]?.text || '',
@@ -28,6 +29,7 @@ async function scrapeYoutube(query) {
           views: v.viewCountText?.simpleText || '',
           url: videoUrl,
           downloadApiUrl: `/api/youtube/download?url=${encodeURIComponent(videoUrl)}`
+
         });
       }
     }

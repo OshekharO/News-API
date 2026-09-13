@@ -18,6 +18,7 @@ const downloadYoutubeVideo = require('./scraper/ytultra');
 const searchDeezer = require('./scraper/deezer');
 const searchItunes = require('./scraper/itunes');
 
+
 const app = express();
 const port = 3000;
 
@@ -470,6 +471,7 @@ app.get('/', (req, res) => {
         </div>
         <p class="card-desc">Search Apple Music / iTunes songs, artwork, and audio previews.</p>
       </div>
+
     </div>
   </div>
 
@@ -734,6 +736,7 @@ app.get('/api/music/itunes/:query', async (req, res) => {
     res.status(500).json({ message: 'An error occurred while searching iTunes.' });
   }
 });
+
 
 const fetchNews = (category, country, res) => {
   fetch(`https://saurav.tech/NewsAPI/top-headlines/category/${category}/${country}.json`)

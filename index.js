@@ -13,7 +13,7 @@ const getRingtones = require('./scraper/ringtone');
 const getGifs = require('./scraper/giphy');
 const scrapeYoutube = require('./scraper/youtube');
 const getWallpapers = require('./scraper/wallhaven');
-const searchAnime = require('./scraper/anime');
+const { searchAnime, getAnimeEpisodes } = require('./scraper/anime');
 
 const app = express();
 const port = 3000;
@@ -435,6 +435,14 @@ app.get('/', (req, res) => {
         </div>
         <p class="card-desc">Search anime titles, posters, ratings, and details.</p>
       </div>
+      <div class="card">
+        <div class="card-top">
+          <span class="method-badge">GET</span>
+          <span class="endpoint" onclick="copyText('/api/anime/episodes/:id')">/api/anime/episodes/:id</span>
+          <button class="copy-btn" onclick="copyText('/api/anime/episodes/:id')" title="Copy">&#128203;</button>
+        </div>
+        <p class="card-desc">List anime episodes, watch links, and download links by Anime ID.</p>
+      </div>
     </div>
   </div>
 
@@ -648,6 +656,17 @@ app.get('/api/anime/search/:query', async (req, res) => {
   } catch (err) {
     console.error(err);
     res.status(500).json({ message: 'An error occurred while searching anime.' });
+  }
+});
+
+app.get('/api/anime/episodes/:id', async (req, res) => {
+  const { id } = req.params;
+  try {
+    const episodeData = await getAnimeEpisodes(id);
+    res.json(episodeData);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: 'An error occurred while fetching anime episodes.' });
   }
 });
 

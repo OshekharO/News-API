@@ -1,5 +1,6 @@
 const cheerio = require('cheerio');
 const axios = require('axios');
+const crypto = require('crypto');
 
 const httpHeaders = {
     'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36',
@@ -20,7 +21,7 @@ const httpHeaders = {
 
 const axiosOpts = {
     headers: httpHeaders,
-    timeout: 15000,
+    timeout: 10000,
     validateStatus: () => true,
 };
 
@@ -36,6 +37,8 @@ const MIRRORS = [
     'https://1337x.tw',
 ];
 
+const D1_API_ENDPOINT = 'https://1337x-d1-static-api.zindex.eu.org/d1-web-api';
+
 function isBlocked($, resStatus) {
     if (resStatus && resStatus !== 200) return true;
     const title = $('title').text().toLowerCase();
@@ -48,15 +51,44 @@ function isBlocked($, resStatus) {
     );
 }
 
-async function torrent1337x(query = '', page = '1') {
+async function fetchFromD1(path) {
+    const fullUrl = 'https://1337x.to' + path;
+    const hash = crypto.createHash('sha256').update(fullUrl).digest('hex');
+    const b64Path = Buffer.from(path).toString('base64');
+    const apiUrl = `${D1_API_ENDPOINT}/${hash}?search_path=${encodeURIComponent(b64Path)}`;
+    const res = await axios.get(apiUrl, axiosOpts);
+    if (res.status === 200) {
+        return res.data;
+    }
+    throw new Error(`D1 API returned status ${res.status}`);
+}
 
+async function getPageHtml(path, baseUrl) {
+    if (baseUrl) {
+        try {
+            const res = await axios.get(`${baseUrl}${path}`, axiosOpts);
+            const doc = cheerio.load(res.data);
+            if (!isBlocked(doc, res.status)) {
+                return { html: res.data, isD1: false };
+            }
+        } catch (err) {
+            // direct mirror fetch failed
+        }
+    }
+    // Fallback to D1 API
+    const d1Data = await fetchFromD1(path);
+    return { html: d1Data, isD1: true };
+}
+
+async function torrent1337x(query = '', page = '1') {
     const allTorrent = [];
+    const searchPath = `/search/${query}/${page}/`;
 
     let $;
     let baseUrl;
 
     for (const mirror of MIRRORS) {
-        const url = `${mirror}/search/${query}/${page}/`;
+        const url = `${mirror}${searchPath}`;
         try {
             const res = await axios.get(url, axiosOpts);
             const doc = cheerio.load(res.data);
@@ -68,11 +100,23 @@ async function torrent1337x(query = '', page = '1') {
             }
         } catch (err) {
             console.error(`1337x mirror ${mirror} failed:`, err.message);
-            // try next mirror
         }
     }
 
-    if (!$ || !baseUrl) {
+    if (!$) {
+        try {
+            const d1Html = await fetchFromD1(searchPath);
+            const doc = cheerio.load(d1Html);
+            if (doc('td.name').length > 0) {
+                $ = doc;
+                baseUrl = null; // Using D1 fallback
+            }
+        } catch (err) {
+            console.error('1337x D1 API search fallback failed:', err.message);
+        }
+    }
+
+    if (!$) {
         return [];
     }
 
@@ -81,8 +125,7 @@ async function torrent1337x(query = '', page = '1') {
         if (!href) {
             return null;
         }
-        return baseUrl + href;
-
+        return href;
     }).get().filter((link) => link !== null);
 
     const fieldMap = {
@@ -98,14 +141,13 @@ async function torrent1337x(query = '', page = '1') {
         'leechers': 'Leechers'
     };
 
-    await Promise.all(links.map(async (element) => {
-
+    await Promise.all(links.map(async (torrentPath) => {
         const data = {};
         try {
-            const detailHtml = await axios.get(element, axiosOpts);
-            const $d = cheerio.load(detailHtml.data);
+            const { html } = await getPageHtml(torrentPath, baseUrl);
+            const $d = cheerio.load(html);
             data.Name = $d('.box-info-heading h1').text().trim();
-            data.Magnet = $d('a.torrentdown1').attr('href') || "";
+            data.Magnet = $d('a[href^="magnet:"]').attr('href') || $d('a.torrentdown1').attr('href') || "";
             const poster = $d('div.torrent-image img').attr('src');
 
             if (typeof poster !== 'undefined') {
@@ -121,7 +163,7 @@ async function torrent1337x(query = '', page = '1') {
                     data[fieldMap[labelRaw]] = valueRaw;
                 }
             });
-            data.Url = element;
+            data.Url = baseUrl ? (baseUrl + torrentPath) : ('https://1337x.to' + torrentPath);
 
             allTorrent.push(data);
         } catch {
@@ -131,6 +173,7 @@ async function torrent1337x(query = '', page = '1') {
 
     return allTorrent;
 }
+
 module.exports = {
     torrent1337x: torrent1337x
 }

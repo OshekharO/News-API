@@ -29,7 +29,7 @@ app.get('/', (req, res) => {
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>News API</title>
+  <title>Omni API</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link rel="icon" href="https://i.imgur.com/38RT99Z.jpg">
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -238,7 +238,7 @@ app.get('/', (req, res) => {
 <body>
 
 <header>
-  <h1>&#9889; News API</h1>
+  <h1>&#9889; Omni API</h1>
   <p>A unified REST API for news, torrents, lyrics, GIFs, and more.</p>
   <div class="base-urls">
     <button type="button" class="base-url-chip" onclick="copyText('https://news-api-six-navy.vercel.app')">news-api-six-navy.vercel.app</button>
@@ -477,7 +477,7 @@ app.get('/', (req, res) => {
 </div>
 
 <footer>
-  <p>All endpoints return JSON &mdash; <a href="https://github.com/OshekharO/News-API" target="_blank" rel="noopener noreferrer">GitHub</a></p>
+  <p>All endpoints return JSON &mdash; <a href="https://github.com/OshekharO/Omni-API" target="_blank" rel="noopener noreferrer">GitHub</a></p>
 </footer>
 
 <div id="toast">Copied!</div>

@@ -519,11 +519,16 @@ app.get('/api/person/:num?', async (req, res) => {
 app.get('/api/memes', async (req, res) => {
   try {
     const response = await axios.get('https://api.imgflip.com/get_memes');
-    // Optimized: Use res.json() to avoid manual pretty-printing overhead and reduce response size
     res.json(response.data);
   } catch (error) {
-    console.error('Error:', error);
-    res.status(500).send('Server error');
+    console.error('Imgflip API failed, trying fallback meme-api:', error.message);
+    try {
+      const fallbackResponse = await axios.get('https://meme-api.com/gimme');
+      res.json(fallbackResponse.data);
+    } catch (fallbackError) {
+      console.error('Error:', fallbackError);
+      res.status(500).send('Server error');
+    }
   }
 });
 
@@ -542,11 +547,16 @@ app.get('/api/slok/:ch?/:sl?', async (req, res) => {
 app.get('/api/jokes/:query', async (req, res) => {
   try {
     const response = await axios.get(`https://api.chucknorris.io/jokes/search?query=${encodeURIComponent(req.params.query)}`);
-    // Optimized: Use res.json() to avoid manual pretty-printing overhead and reduce response size
     res.json(response.data);
   } catch (error) {
-    console.error('Error:', error);
-    res.status(500).send('Server error');
+    console.error('Chuck Norris API failed, trying JokeAPI fallback:', error.message);
+    try {
+      const fallback = await axios.get(`https://v2.jokeapi.dev/joke/Any?contains=${encodeURIComponent(req.params.query)}`);
+      res.json(fallback.data);
+    } catch (fallbackError) {
+      console.error('Error:', fallbackError);
+      res.status(500).send('Server error');
+    }
   }
 });
 
@@ -556,11 +566,17 @@ app.get('/api/ifsc/:ifsc', async (req, res) => {
     const url = `https://bank-apis.justinclicks.com/API/V1/IFSC/${encodeURIComponent(ifsc)}`;
 
     const response = await axios.get(url);
-    // Optimized: Use res.json() to avoid manual pretty-printing overhead and reduce response size
     res.json(response.data);
   } catch (error) {
-    console.error('Error:', error);
-    res.status(500).send('Server error');
+    console.error('Primary IFSC API failed, trying Razorpay fallback:', error.message);
+    try {
+      const fallbackUrl = `https://ifsc.razorpay.com/${encodeURIComponent(req.params.ifsc)}`;
+      const fallbackResponse = await axios.get(fallbackUrl);
+      res.json(fallbackResponse.data);
+    } catch (fallbackError) {
+      console.error('Error:', fallbackError);
+      res.status(500).send('Server error');
+    }
   }
 });
 

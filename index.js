@@ -21,7 +21,6 @@ const searchItunes = require('./scraper/itunes');
 const app = express();
 const port = 3000;
 
-// Enable All CORS Requests
 app.use(cors());
 
 app.get('/', (req, res) => {

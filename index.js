@@ -23,13 +23,89 @@ const port = 3000;
 
 app.use(cors());
 
+// SEO: robots.txt route
+app.get('/robots.txt', (req, res) => {
+  const protocol = req.headers['x-forwarded-proto'] || req.protocol || 'https';
+  const host = req.headers.host || 'news-api.cyclic.app';
+  const baseUrl = `${protocol}://${host}`;
+  
+  res.type('txt').send(`User-agent: *
+Allow: /
+
+Sitemap: ${baseUrl}/sitemap.xml
+`);
+});
+
+// SEO: sitemap.xml route
+app.get('/sitemap.xml', (req, res) => {
+  const protocol = req.headers['x-forwarded-proto'] || req.protocol || 'https';
+  const host = req.headers.host || 'news-api.cyclic.app';
+  const baseUrl = `${protocol}://${host}`;
+  const lastmod = new Date().toISOString().split('T')[0];
+
+  res.type('xml').send(`<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+  <url>
+    <loc>${baseUrl}/</loc>
+    <lastmod>${lastmod}</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>1.0</priority>
+  </url>
+</urlset>
+`);
+});
+
+
 app.get('/', (req, res) => {
+  const protocol = req.headers['x-forwarded-proto'] || req.protocol || 'https';
+  const host = req.headers.host || 'news-api.cyclic.app';
+  const baseUrl = `${protocol}://${host}`;
+  const canonicalUrl = `${baseUrl}/`;
+
+  const structuredData = {
+    "@context": "https://schema.org",
+    "@type": "SoftwareApplication",
+    "name": "Omni API",
+    "operatingSystem": "All",
+    "applicationCategory": "DeveloperApplication",
+    "description": "Unified REST API for fetching news, torrents, anime details, lyrics, wallpapers, and media metadata.",
+    "url": canonicalUrl,
+    "offers": {
+      "@type": "Offer",
+      "price": "0",
+      "priceCurrency": "USD"
+    }
+  };
+
   res.send(`<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Omni API</title>
+  <title>Omni API - Unified REST API for News, Torrents & Media</title>
+  <meta name="description" content="Omni API is a unified REST API endpoint for fetching news, torrents, anime metadata, song lyrics, wallpapers, and GIFs easily.">
+  <meta name="keywords" content="API, News API, Torrents API, Anime API, REST API, Developers">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="canonical" href="${canonicalUrl}">
+
+  <!-- Open Graph / Facebook -->
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="${canonicalUrl}">
+  <meta property="og:title" content="Omni API - Unified REST API for News, Torrents & Media">
+  <meta property="og:description" content="A unified REST API for news, torrents, lyrics, GIFs, wallpapers, anime, and more.">
+  <meta property="og:image" content="https://i.imgur.com/38RT99Z.jpg">
+  <meta property="og:site_name" content="Omni API">
+
+  <!-- Twitter Card -->
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Omni API - Unified REST API for News, Torrents & Media">
+  <meta name="twitter:description" content="A unified REST API for news, torrents, lyrics, GIFs, wallpapers, anime, and more.">
+  <meta name="twitter:image" content="https://i.imgur.com/38RT99Z.jpg">
+
+  <!-- Structured Data (JSON-LD) -->
+  <script type="application/ld+json">
+  ${JSON.stringify(structuredData, null, 2)}
+  </script>
+
   <link rel="icon" href="https://i.imgur.com/38RT99Z.jpg">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">

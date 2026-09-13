@@ -85,10 +85,22 @@ async function torrent1337x(query = '', page = '1') {
 
     }).get().filter((link) => link !== null);
 
+    const fieldMap = {
+        'category': 'Category',
+        'type': 'Type',
+        'language': 'Language',
+        'total size': 'Size',
+        'uploaded by': 'UploadedBy',
+        'downloads': 'Downloads',
+        'last checked': 'LastChecked',
+        'date uploaded': 'DateUploaded',
+        'seeders': 'Seeders',
+        'leechers': 'Leechers'
+    };
+
     await Promise.all(links.map(async (element) => {
 
         const data = {};
-        const labels = ['Category', 'Type', 'Language', 'Size', 'UploadedBy', 'Downloads', 'LastChecked', 'DateUploaded', 'Seeders', 'Leechers'];
         try {
             const detailHtml = await axios.get(element, axiosOpts);
             const $d = cheerio.load(detailHtml.data);
@@ -102,8 +114,12 @@ async function torrent1337x(query = '', page = '1') {
                 data.Poster = '';
             }
 
-            $d('ul.list li span').each((i, el) => {
-                data[labels[i]] = $d(el).text();
+            $d('div.torrent-detail-page ul.list li').each((i, el) => {
+                const labelRaw = $d(el).find('strong').text().trim().toLowerCase();
+                const valueRaw = $d(el).find('span').text().trim();
+                if (labelRaw && fieldMap[labelRaw]) {
+                    data[fieldMap[labelRaw]] = valueRaw;
+                }
             });
             data.Url = element;
 

@@ -14,6 +14,9 @@ const getGifs = require('./scraper/giphy');
 const scrapeYoutube = require('./scraper/youtube');
 const getWallpapers = require('./scraper/wallhaven');
 const { searchAnime, getAnimeEpisodes } = require('./scraper/anime');
+const downloadYoutubeVideo = require('./scraper/ytultra');
+const searchDeezer = require('./scraper/deezer');
+const searchItunes = require('./scraper/itunes');
 
 const app = express();
 const port = 3000;
@@ -443,6 +446,31 @@ app.get('/', (req, res) => {
         </div>
         <p class="card-desc">List anime episodes, watch links, and download links by Anime ID.</p>
       </div>
+      <div class="card">
+        <div class="card-top">
+          <span class="method-badge">POST/GET</span>
+          <span class="endpoint" onclick="copyText('/api/youtube/download?url=...')">/api/youtube/download</span>
+          <button class="copy-btn" onclick="copyText('/api/youtube/download?url=...')" title="Copy">&#128203;</button>
+        </div>
+        <p class="card-desc">Extract YouTube video/audio direct download links via YTUltra.</p>
+      </div>
+      <div class="card">
+        <div class="card-top">
+          <span class="method-badge">GET</span>
+          <span class="endpoint" onclick="copyText('/api/music/deezer/:query')">/api/music/deezer/:query</span>
+          <button class="copy-btn" onclick="copyText('/api/music/deezer/:query')" title="Copy">&#128203;</button>
+        </div>
+        <p class="card-desc">Search music, artists, albums, and audio preview streams on Deezer.</p>
+      </div>
+      <div class="card">
+        <div class="card-top">
+          <span class="method-badge">GET</span>
+          <span class="endpoint" onclick="copyText('/api/music/itunes/:query')">/api/music/itunes/:query</span>
+          <button class="copy-btn" onclick="copyText('/api/music/itunes/:query')" title="Copy">&#128203;</button>
+        </div>
+        <p class="card-desc">Search Apple Music / iTunes songs, artwork, and audio previews.</p>
+      </div>
+
     </div>
   </div>
 
@@ -669,6 +697,45 @@ app.get('/api/anime/episodes/:id', async (req, res) => {
     res.status(500).json({ message: 'An error occurred while fetching anime episodes.' });
   }
 });
+
+app.use(express.json());
+
+app.all('/api/youtube/download', async (req, res) => {
+  const videoUrl = req.body?.url || req.query?.url;
+  if (!videoUrl) {
+    return res.status(400).json({ error: 'Missing url parameter in body or query query string' });
+  }
+  try {
+    const data = await downloadYoutubeVideo(videoUrl);
+    res.json(data);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: 'An error occurred while resolving YouTube download.' });
+  }
+});
+
+app.get('/api/music/deezer/:query', async (req, res) => {
+  const { query } = req.params;
+  try {
+    const musicList = await searchDeezer(query);
+    res.json(musicList);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: 'An error occurred while searching Deezer.' });
+  }
+});
+
+app.get('/api/music/itunes/:query', async (req, res) => {
+  const { query } = req.params;
+  try {
+    const musicList = await searchItunes(query);
+    res.json(musicList);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: 'An error occurred while searching iTunes.' });
+  }
+});
+
 
 const fetchNews = (category, country, res) => {
   fetch(`https://saurav.tech/NewsAPI/top-headlines/category/${category}/${country}.json`)

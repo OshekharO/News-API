@@ -506,10 +506,9 @@ app.get('/api/ringtone/:query', async (req, res) => {
 app.get('/api/person/:num?', async (req, res) => {
   try {
     const num = req.params.num || 1;
-    const url = `https://peoplegeneratorapi.live/api/person/${encodeURIComponent(num)}`;
+    const url = `https://randomuser.me/api/?results=${encodeURIComponent(num)}`;
 
     const response = await axios.get(url);
-    // Optimized: Use res.json() to avoid manual pretty-printing overhead and reduce response size
     res.json(response.data);
   } catch (error) {
     console.error('Error:', error);
@@ -532,8 +531,7 @@ app.get('/api/slok/:ch?/:sl?', async (req, res) => {
     const chapter = req.params.ch || '1';
     const sloka = req.params.sl || '1';
     try {
-        const response = await axios.get(`https://bhagavadgitaapi.in/slok/${encodeURIComponent(chapter)}/${encodeURIComponent(sloka)}`);
-        // Optimized: Use res.json() to avoid manual pretty-printing overhead and reduce response size
+        const response = await axios.get(`https://vedicscriptures.github.io/slok/${encodeURIComponent(chapter)}/${encodeURIComponent(sloka)}`);
         res.json(response.data);
     } catch (error) {
         console.error('Error:', error);
@@ -569,12 +567,8 @@ app.get('/api/ifsc/:ifsc', async (req, res) => {
 app.get('/api/genius/:query', async (req, res) => {
   const { query } = req.params;
   try {
-    const response = await fetch(`https://genius.com/api/search/multi?per_page=1&q=${encodeURIComponent(query)}`);
-    if (!response.ok) {
-      throw new Error(`HTTP error! status: ${response.status}`);
-    }
-    const data = await response.json();
-    res.json(data);
+    const response = await axios.get(`https://lrclib.net/api/search?q=${encodeURIComponent(query)}`);
+    res.json(response.data);
   } catch (err) {
     console.error(err);
     res.status(500).json({ message: 'An error occurred while fetching data from Genius.' });

@@ -12,7 +12,8 @@ async function searchDeezer(query) {
       title_short: item.title_short,
       link: item.link,
       duration: item.duration,
-      preview: item.preview,
+      downloadUrl: item.preview || null,
+      audioStream: item.preview || null,
       artist: {
         id: item.artist?.id,
         name: item.artist?.name,

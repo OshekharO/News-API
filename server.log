@@ -1,7 +1,0 @@
-(node:971521) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
-(Use `node --trace-deprecation ...` to show where the warning was created)
-Server running at http://localhost:3000/
-Error fetching source ann: request to https://api.fl-anime.com/news/ann/recent-feeds failed, reason: getaddrinfo ENOTFOUND api.fl-anime.com
-Falling back to MyAnimeList RSS feed for anime news...
-Error fetching source ann: request to https://api.fl-anime.com/news/ann/recent-feeds failed, reason: getaddrinfo ENOTFOUND api.fl-anime.com
-Falling back to MyAnimeList RSS feed for anime news...

@@ -11,6 +11,9 @@ const { yts } = require('./scraper/yts');
 const scrapePixiv = require('./scraper/pixiv');
 const getRingtones = require('./scraper/ringtone');
 const getGifs = require('./scraper/giphy');
+const scrapeYoutube = require('./scraper/youtube');
+const getWallpapers = require('./scraper/wallhaven');
+const searchAnime = require('./scraper/anime');
 
 const app = express();
 const port = 3000;
@@ -408,6 +411,30 @@ app.get('/', (req, res) => {
         </div>
         <p class="card-desc">Jokes from Chuck Norris API by category.</p>
       </div>
+      <div class="card">
+        <div class="card-top">
+          <span class="method-badge">GET</span>
+          <span class="endpoint" onclick="copyText('/api/youtube/search/:query')">/api/youtube/search/:query</span>
+          <button class="copy-btn" onclick="copyText('/api/youtube/search/:query')" title="Copy">&#128203;</button>
+        </div>
+        <p class="card-desc">Search YouTube videos, thumbnails, and links.</p>
+      </div>
+      <div class="card">
+        <div class="card-top">
+          <span class="method-badge">GET</span>
+          <span class="endpoint" onclick="copyText('/api/wallpaper/:query')">/api/wallpaper/:query</span>
+          <button class="copy-btn" onclick="copyText('/api/wallpaper/:query')" title="Copy">&#128203;</button>
+        </div>
+        <p class="card-desc">Search HD wallpapers from Wallhaven.</p>
+      </div>
+      <div class="card">
+        <div class="card-top">
+          <span class="method-badge">GET</span>
+          <span class="endpoint" onclick="copyText('/api/anime/search/:query')">/api/anime/search/:query</span>
+          <button class="copy-btn" onclick="copyText('/api/anime/search/:query')" title="Copy">&#128203;</button>
+        </div>
+        <p class="card-desc">Search anime titles, posters, ratings, and details.</p>
+      </div>
     </div>
   </div>
 
@@ -588,6 +615,39 @@ app.get('/api/genius/:query', async (req, res) => {
   } catch (err) {
     console.error(err);
     res.status(500).json({ message: 'An error occurred while fetching data from Genius.' });
+  }
+});
+
+app.get('/api/youtube/search/:query', async (req, res) => {
+  const { query } = req.params;
+  try {
+    const videos = await scrapeYoutube(query);
+    res.json(videos);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: 'An error occurred while searching YouTube.' });
+  }
+});
+
+app.get('/api/wallpaper/:query', async (req, res) => {
+  const { query } = req.params;
+  try {
+    const wallpapers = await getWallpapers(query);
+    res.json(wallpapers);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: 'An error occurred while fetching wallpapers.' });
+  }
+});
+
+app.get('/api/anime/search/:query', async (req, res) => {
+  const { query } = req.params;
+  try {
+    const animeList = await searchAnime(query);
+    res.json(animeList);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: 'An error occurred while searching anime.' });
   }
 });
 

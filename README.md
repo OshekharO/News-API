@@ -1,4 +1,4 @@
-# News API
+# Omni API
 
 This is a simple server that serves as a unified API endpoint for fetching news from different sources. Currently, it supports AnimeNewsNetwork, Inshorts and some other sources.
 

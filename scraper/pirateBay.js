@@ -5,17 +5,35 @@ const axiosOpts = {
     headers: {
         'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36',
     },
-    timeout: 15000,
+    timeout: 10000,
 };
+
+const MIRRORS = [
+    'https://thehiddenbay.com',
+    'https://piratebay.party',
+    'https://thepiratebay0.org',
+    'https://tpb.party',
+];
 
 async function pirateBay(query, page = '1') {
 
     const allTorrents = [];
-    const url = 'https://thehiddenbay.com/search/' + query + '/' + page + '/99/0';
-    let html;
-    try {
-        html = await axios.get(url, axiosOpts);
-    } catch {
+    let html = null;
+
+    for (const mirror of MIRRORS) {
+        const url = `${mirror}/search/${query}/${page}/99/0`;
+        try {
+            const res = await axios.get(url, axiosOpts);
+            if (res.status === 200 && res.data) {
+                html = res;
+                break;
+            }
+        } catch {
+            // try next mirror
+        }
+    }
+
+    if (!html) {
         return [];
     }
     const $ = cheerio.load(html.data)

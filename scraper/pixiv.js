@@ -6,122 +6,37 @@ async function scrapePixiv(query, page = 1) {
         const validatedPage = validatePage(page);
         const validatedQuery = validateQuery(query);
         
-        const url = `https://litexiv.qunn.link/tags/${encodeURIComponent(validatedQuery)}?p=${validatedPage}`;
+        const url = `https://www.pixiv.net/ajax/search/artworks/${encodeURIComponent(validatedQuery)}?p=${validatedPage}`;
         
-        console.log(`Scraping URL: ${url}`);
-        
-        const { data, status, headers } = await axios.get(url, {
+        const { data, status } = await axios.get(url, {
             timeout: 15000,
             headers: {
-                'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36',
-                'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8',
-                'Accept-Language': 'en-US,en;q=0.5',
-            },
-            validateStatus: function (status) {
-                return status < 500; // Don't throw for 404, but do for 500
+                'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36',
+                'Referer': 'https://www.pixiv.net/',
+                'Accept': 'application/json, text/plain, */*'
             }
         });
         
-        console.log(`Response status: ${status}`);
-        
-        if (status === 404) {
-            throw new Error(`No results found for query "${validatedQuery}"`);
+        if (status !== 200 || data.error) {
+            throw new Error(data.message || `Server returned status: ${status}`);
         }
         
-        if (status !== 200) {
-            throw new Error(`Server returned status: ${status}`);
-        }
-        
-        const $ = cheerio.load(data);
-        const artworks = [];
+        const items = data.body?.illustManga?.data || [];
+        const artworks = items.filter(item => item.id).map(item => ({
+            title: item.title || item.illustTitle || 'Untitled',
+            artist: item.userName || item.userAccount || 'Unknown Artist',
+            artistAvatar: item.profileImageUrl || null,
+            image: item.url ? item.url.replace('/c/250x250_80_a2/', '/') : null,
+            thumbnail: item.url || null,
+            link: `https://www.pixiv.net/artworks/${item.id}`,
+            artworkId: item.id
+        }));
 
-        // Check if we got any results
-        const noResults = $('body').text().includes('No results found') || 
-                         $('.grid.show-author').length === 0;
-        
-        if (noResults) {
-            return {
-                success: true,
-                query: validatedQuery,
-                page: validatedPage,
-                results: [],
-                count: 0,
-                message: 'No artworks found for this query'
-            };
-        }
-
-        // Select each artwork grid item
-        $('.grid.show-author > div').each((i, el) => {
-            try {
-                const $el = $(el);
-                
-                // Extract image information
-                const thumbnail = $el.find('a.thumbnail');
-                const imageElement = thumbnail.find('img');
-                const imageSrc = imageElement.attr('src');
-                
-                if (!imageSrc) {
-                    console.log('No image source found for element:', i);
-                    return; // Skip this element
-                }
-                
-                // Extract title information
-                const titleLink = $el.find('a.title');
-                let title = titleLink.find('b').text().trim();
-                if (!title) {
-                    title = titleLink.attr('title') || 'Untitled';
-                }
-                
-                // Extract author information
-                const authorLink = $el.find('a.author');
-                const authorName = authorLink.find('.username').text().trim() || 'Unknown Artist';
-                const authorAvatar = authorLink.find('img.avatar').attr('src');
-                
-                const artworkLink = thumbnail.attr('href');
-                
-                const artwork = {
-                    title: title,
-                    artist: authorName,
-                    artistAvatar: authorAvatar ? `https://litexiv.qunn.link${authorAvatar}` : null,
-                    image: transformImageUrl(imageSrc),
-                    thumbnail: imageSrc,
-                    link: artworkLink ? `https://litexiv.qunn.link${artworkLink}` : null,
-                    artworkId: extractArtworkId(artworkLink)
-                };
-                
-                artworks.push(artwork);
-                
-            } catch (elementError) {
-                console.error(`Error processing artwork element ${i}:`, elementError.message);
-                // Continue with next element
-            }
-        });
-
-        console.log(`Found ${artworks.length} artworks for query "${validatedQuery}" on page ${validatedPage}`);
-        
-        return {
-            success: true,
-            query: validatedQuery,
-            page: validatedPage,
-            results: artworks,
-            count: artworks.length,
-            hasMore: artworks.length > 0
-        };
+        return artworks;
         
     } catch (error) {
-        console.error('Pixiv scraping error details:', {
-            message: error.message,
-            response: error.response?.status,
-            url: error.config?.url
-        });
-        
-        if (error.response) {
-            throw new Error(`Pixiv server error: ${error.response.status} - ${error.response.statusText}`);
-        } else if (error.request) {
-            throw new Error('Network error: Could not reach Pixiv server');
-        } else {
-            throw new Error(`Scraping error: ${error.message}`);
-        }
+        console.error('Pixiv API error details:', error.message);
+        throw new Error(`Scraping error: ${error.message}`);
     }
 }
 

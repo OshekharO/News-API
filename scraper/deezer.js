@@ -24,7 +24,9 @@ async function searchDeezer(query) {
     });
     const items = res.data?.data || [];
 
-    // Enrich top results with full audio stream URLs resolved via YouTube
+    // ⚡ BOLT OPTIMIZATION: Concurrently resolve YouTube audio streams for all items using Promise.all
+    // Processing items concurrently via Promise.all ensures network requests execute in parallel,
+    // maintaining low response latency for music search requests.
     return await Promise.all(items.map(async (item) => {
       const fullAudioUrl = await getFullAudioUrl(item.title || '', item.artist?.name || '');
       return {
